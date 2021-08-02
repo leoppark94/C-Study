@@ -1,0 +1,4 @@
+﻿  ex1.cpp
+D:\Github\C-Study\4강 ~ 10강\Lecture 5\ex1.cpp(31,16): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+D:\Github\C-Study\4강 ~ 10강\Lecture 5\ex1.cpp(32,17): warning C4305: '초기화 중': 'double'에서 'float'(으)로 잘립니다.
+  Lecture 5.vcxproj -> D:\Github\C-Study\4강 ~ 10강\Lecture 5\Debug\Lecture 5.exe
