@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31515.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lecture 14", "lecture 14.vcxproj", "{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Debug|x64.ActiveCfg = Debug|x64
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Debug|x64.Build.0 = Debug|x64
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Debug|x86.ActiveCfg = Debug|Win32
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Debug|x86.Build.0 = Debug|Win32
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Release|x64.ActiveCfg = Release|x64
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Release|x64.Build.0 = Release|x64
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Release|x86.ActiveCfg = Release|Win32
+		{CFAFB50B-725B-4024-AE4A-0710D7BB65CE}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18E2459C-4FC2-4DD2-A35E-C3E434B2C1A4}
+	EndGlobalSection
+EndGlobal
