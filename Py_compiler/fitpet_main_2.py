@@ -1,0 +1,1207 @@
+#!/usr/bin/env python
+import io #line:7
+import requests #line:8
+import re #line:9
+import pandas as pd #line:10
+import numpy as np #line:11
+import json #line:12
+import base64 #line:13
+import request_api #line:16
+import regular as reg #line:17
+def naver_clova_reader (OOOO00O00OO0000O0 ,OOOO0000OOOO00O0O ,OOO0OO0000OO0000O ,OOOOO0OOOO00O00O0 ):#line:20
+    O00OOO0O000000O0O =requests .get (str (OOOOO0OOOO00O00O0 ))#line:22
+    OOOOO0O000OO000OO =io .BytesIO (O00OOO0O000000O0O .content )#line:24
+    O00O0000O0OO0O00O =io .BufferedReader (OOOOO0O000OO000OO )#line:25
+    OOOOOO0O00O00O000 =request_api .request_api (OOOO00O00OO0000O0 ,OOOO0000OOOO00O0O ,OOO0OO0000OO0000O ,O00O0000O0OO0O00O )#line:27
+    return OOOOOO0O00O00O000 #line:29
+def Categorizer (OO0000O0OO00O00OO ):#line:33
+    OOO0O0O0000O0OOOO =''#line:35
+    O0OO0000OOOO00OO0 =''#line:36
+    O0OOO0OOO000O00OO =' ?동 ?물 ?명 ?'#line:38
+    O000OO0OOOO0O0000 =' ?상 ?품 ?명 ?'#line:39
+    O0OOO00OO0OO0OOO0 =' ?진 ?료 ?내 ?역 ?서 ?'#line:40
+    OOO00OO00OO0OOO00 =' ?수 ?량 ?'#line:41
+    if re .search (O0OOO0OOO000O00OO ,OO0000O0OO00O00OO )!=None :#line:43
+        O0OO0000OOOO00OO0 =OO0000O0OO00O00OO #line:44
+    elif re .search (O000OO0OOOO0O0000 ,OO0000O0OO00O00OO )!=None :#line:45
+        O0OO0000OOOO00OO0 =OO0000O0OO00O00OO #line:46
+    elif re .search (O0OOO00OO0OO0OOO0 ,OO0000O0OO00O00OO )!=None :#line:47
+        O0OO0000OOOO00OO0 =OO0000O0OO00O00OO #line:48
+    elif re .search (OOO00OO00OO0OOO00 ,OO0000O0OO00O00OO )!=None :#line:49
+        O0OO0000OOOO00OO0 =OO0000O0OO00O00OO #line:50
+    else :#line:52
+        OOO0O0O0000O0OOOO =OO0000O0OO00O00OO #line:53
+    return OOO0O0O0000O0OOOO ,O0OO0000OOOO00OO0 #line:55
+def filtering (OOO0000OO0O000O0O ):#line:59
+    OOO000O000O000OO0 =''#line:60
+    O00OO0O000OOOOOOO =''#line:61
+    OO0OO00000OOO000O =True #line:62
+    OOO0OO0OOOOO0000O =['신용','승인','매출전표','카드','Web 발신']#line:65
+    for OO000OO0000O0OOO0 in OOO0OO0OOOOO0000O :#line:67
+        OO00000OOOO00OO00 =OOO0000OO0O000O0O .find (OO000OO0000O0OOO0 )#line:68
+        if OO00000OOOO00OO00 ==-1 :#line:69
+            OOO000O000O000OO0 =OOO0000OO0O000O0O #line:70
+        else :#line:71
+            O00OO0O000OOOOOOO ,OOO000O000O000OO0 =Categorizer (OOO0000OO0O000O0O )#line:72
+    if O00OO0O000OOOOOOO !='':#line:74
+        OO0OO00000OOO000O =False #line:75
+    return OOO000O000O000OO0 ,OO0OO00000OOO000O #line:78
+def csv_to_data (OO00OOOO00OO00000 ):#line:83
+    OO0OOOOOOOOOO0OO0 =pd .read_csv (OO00OOOO00OO00000 ,header =0 )#line:84
+    O0O00000OOOO0OO00 =OO0OOOOOOOOOO0OO0 .values #line:85
+    return O0O00000OOOO0OO00 #line:86
+def find_one (O0O0000000O0000OO ):#line:90
+    OOO0O00O0O0O0O0O0 =[]#line:91
+    O0OOOOOOO000OOO00 =[]#line:92
+    O00OOOOOO0OOO0OO0 ="min"#line:93
+    if len (O0O0000000O0000OO )>0 :#line:94
+        for OOOOOOO00000O0OO0 in O0O0000000O0000OO :#line:95
+            if OOOOOOO00000O0OO0 !="":#line:96
+                try :#line:97
+                    O0OOOO0O0OO00O00O =int (OOOOOOO00000O0OO0 .replace (',','').replace (' ','').replace ('.','').replace ('-','').replace ('/','').replace (':',''))#line:100
+                    OOO0O00O0O0O0O0O0 .append (O0OOOO0O0OO00O00O )#line:101
+                except ValueError :#line:102
+                    continue #line:103
+                if O0OOOO0O0OO00O00O >=0 :#line:104
+                    O00OOOOOO0OOO0OO0 ="max"#line:105
+        if O00OOOOOO0OOO0OO0 =="max":#line:106
+            if len (OOO0O00O0O0O0O0O0 )>0 :#line:107
+                O0OOOOOOO000OOO00 .append (format (max (OOO0O00O0O0O0O0O0 ),','))#line:108
+            else :#line:109
+                return 0 #line:110
+        else :#line:111
+            if len (OOO0O00O0O0O0O0O0 )>0 :#line:112
+                O0OOOOOOO000OOO00 .append (format (min (OOO0O00O0O0O0O0O0 ),','))#line:113
+            else :#line:114
+                return 0 #line:115
+        return O0OOOOOOO000OOO00 #line:116
+    else :#line:117
+        return 0 #line:118
+def Remover (OOOOOOOO000O0O0OO ,OO0O0OO0O000O0OOO ):#line:122
+    OO0O0OO0O000O0OOO =re .sub (OOOOOOOO000O0O0OO ," ",OO0O0OO0O000O0OOO )#line:124
+    OO0O0OO0O000O0OOO =Remove_Multiple_Space (OO0O0OO0O000O0OOO )#line:125
+    return OO0O0OO0O000O0OOO #line:126
+def Remove_Multiple_Space (O0OO0OOO000OO0O0O ):#line:130
+    O0OO0OOO000OO0O0O =re .sub (" {2,}"," ",O0OO0OOO000OO0O0O )#line:131
+    return O0OO0OOO000OO0O0O #line:132
+def Cost_Maker (OOOOOOOOO0O0000OO ):#line:137
+    OO000O0O0O0OO00O0 =[]#line:138
+    for O0O000OOOOO0O0O00 in OOOOOOOOO0O0000OO :#line:140
+        O0OO00000OOOOOO00 =[]#line:141
+        O0OO00000OOOOOO00 .append (O0O000OOOOO0O0O00 [0 ])#line:142
+        O0OO00000OOOOOO00 .append (O0O000OOOOO0O0O00 [1 ])#line:143
+        OO000O0O0O0OO00O0 .append (O0OO00000OOOOOO00 )#line:144
+    return OO000O0O0O0OO00O0 #line:146
+def Remove_Words (OOOO000OO0OO00000 ):#line:149
+    OOOO000OO0OO00000 =Remover (" ?진료 ?및 ?미용 ?[내역]{0,}",OOOO000OO0OO00000 )#line:150
+    OOOO000OO0OO00000 =Remover (" ?항 ?목 ?단 ?가 ?수 ?량 ?금 ?액 ?",OOOO000OO0OO00000 )#line:151
+    OOOO000OO0OO00000 =Remover (" ?구 ?분 ?내 ?용 ?[수스] ?량 ?금 ?액 ?할 ?인 할 ?증 ?",OOOO000OO0OO00000 )#line:152
+    OOOO000OO0OO00000 =Remover (" ?구 ?분 ?내 ?용 ?수 ?량 ?금 ?액 ?할 ?인 ?",OOOO000OO0OO00000 )#line:153
+    OOOO000OO0OO00000 =Remover (" ?구 ?분 ?내 ?용 ?수 ?량 ?금 ?액 ?",OOOO000OO0OO00000 )#line:154
+    OOOO000OO0OO00000 =Remover (" ?내 ?용 ?수 ?량 ?금 ?액 ?할 ?인 ?할 ?증 ?적 ?용 ?금 ?액 ?",OOOO000OO0OO00000 )#line:155
+    OOOO000OO0OO00000 =Remover (" ?구 ?분 ?금 ?액 ?할 ?인 ?할 ?증 ?적 ?용 ?금 ?액 ?",OOOO000OO0OO00000 )#line:156
+    OOOO000OO0OO00000 =Remover (" ?구 ?분 ? 할 ?인 ?할 ?증 ? 비 ?과 ?세 ? 과 ?세 ?부 ?가 ?세 ?추 ?가 ?할 ?증 ?추 ?가 ?할 ?인 ?적 ?용 ?금 ?액 ?",OOOO000OO0OO00000 )#line:157
+    OOOO000OO0OO00000 =Remover (" ?발 ?행 ?일 ?:? ?",OOOO000OO0OO00000 )#line:158
+    OOOO000OO0OO00000 =Remover (" ?결 ?제 ?일 ?:? ?",OOOO000OO0OO00000 )#line:159
+    OOOO000OO0OO00000 =Remover (" ?믿 ?고 ? [맡말] ?길 ?수 ?있 ?는 ?병 ?원 ?[이미] ?되 ?도 ?록 ?항 ?상 ?노 ?력 ?하 ?겠 ?습 ?",OOOO000OO0OO00000 )#line:160
+    OOOO000OO0OO00000 =Remover (" ?감 ?사 ?합 ?니 ?다 ?[\.!]{0,}",OOOO000OO0OO00000 )#line:161
+    OOOO000OO0OO00000 =Remover (" ?S ?e ?r ?i ?a ?l N ?o ?\. ?:? ?\d{5} ?",OOOO000OO0OO00000 )#line:162
+    OOOO000OO0OO00000 =Remover (" ?:? ?'?\"?\]$",OOOO000OO0OO00000 )#line:163
+    OOOO000OO0OO00000 =re .sub ('^ ?\[ ?\'?\"? ?',"",OOOO000OO0OO00000 )#line:164
+    return OOOO000OO0OO00000 #line:166
+def OCR_Error_Correction (OOOO000000OO0OOO0 ):#line:169
+    OOOO000000OO0OOO0 =re .sub ("합 계","합계",OOOO000000OO0OOO0 )#line:170
+    OOOO000000OO0OOO0 =re .sub ("소 계","소계",OOOO000000OO0OOO0 )#line:171
+    OOOO000000OO0OOO0 =re .sub ("부 가 세","부가세",OOOO000000OO0OOO0 )#line:172
+    OOOO000000OO0OOO0 =re .sub ("할 인","할인",OOOO000000OO0OOO0 )#line:173
+    OOOO000000OO0OOO0 =re .sub ("합 ?인","할인",OOOO000000OO0OOO0 )#line:174
+    OOOO000000OO0OOO0 =re .sub ("할인 내역","할인내역",OOOO000000OO0OOO0 )#line:175
+    OOOO000000OO0OOO0 =re .sub ("할인 금액","할인금액",OOOO000000OO0OOO0 )#line:176
+    OOOO000000OO0OOO0 =re .sub ("할인 소계","할인소계",OOOO000000OO0OOO0 )#line:177
+    OOOO000000OO0OOO0 =re .sub ("추가 할인","추가할인",OOOO000000OO0OOO0 )#line:178
+    OOOO000000OO0OOO0 =re .sub ("합 계","합계",OOOO000000OO0OOO0 )#line:179
+    OOOO000000OO0OOO0 =re .sub ("합 ?겨","합계",OOOO000000OO0OOO0 )#line:180
+    OOOO000000OO0OOO0 =re .sub ("_"," ",OOOO000000OO0OOO0 )#line:181
+    OOOO000000OO0OOO0 =re .sub ("\d{1,} ?ko","\1 kg",OOOO000000OO0OOO0 )#line:182
+    OOOO000000OO0OOO0 =re .sub ("O ?kg","0kg",OOOO000000OO0OOO0 )#line:183
+    OOOO000000OO0OOO0 =re .sub (" l "," 1 ",OOOO000000OO0OOO0 )#line:184
+    OOOO000000OO0OOO0 =re .sub (" G "," 6 ",OOOO000000OO0OOO0 )#line:185
+    OOOO000000OO0OOO0 =re .sub ("↓","1",OOOO000000OO0OOO0 )#line:186
+    OOOO000000OO0OOO0 =re .sub ("[kK].[gG]",'kg',OOOO000000OO0OOO0 )#line:187
+    OOOO000000OO0OOO0 =re .sub ("■",' ',OOOO000000OO0OOO0 )#line:188
+    OOOO000000OO0OOO0 =re .sub ("\-[ ]{0,2}\~"," ~",OOOO000000OO0OOO0 )#line:189
+    OOOO000000OO0OOO0 =re .sub ("(\d[ ]{0,1})kq",r"\1kg",OOOO000000OO0OOO0 )#line:190
+    OOOO000000OO0OOO0 =re .sub ("결 ?제 ?액 ?정 ?","결제예정",OOOO000000OO0OOO0 )#line:191
+    OOOO000000OO0OOO0 =re .sub ("합 ?거 ?","합계",OOOO000000OO0OOO0 )#line:192
+    OOOO000000OO0OOO0 =re .sub ("항 ?독 ?","항목",OOOO000000OO0OOO0 )#line:193
+    OOOO000000OO0OOO0 =re .sub ("동 ?물 ?이 ?름 ?","동물명",OOOO000000OO0OOO0 )#line:194
+    OOOO000000OO0OOO0 =re .sub ("경 ?제 ?요 ?정 ?","결제요청",OOOO000000OO0OOO0 )#line:195
+    OOOO000000OO0OOO0 =re .sub ("루 ?가 ?세","부가세",OOOO000000OO0OOO0 )#line:196
+    OOOO000000OO0OOO0 =re .sub ("부 ?과 ?세","부가세",OOOO000000OO0OOO0 )#line:197
+    OOOO000000OO0OOO0 =re .sub ("부 ?가 ?가 ?치 ?세 ?","부가세",OOOO000000OO0OOO0 )#line:198
+    OOOO000000OO0OOO0 =re .sub ("발 ?햄 ?일 ?","발행일",OOOO000000OO0OOO0 )#line:199
+    OOOO000000OO0OOO0 =re .sub ("포 ?힘","포함",OOOO000000OO0OOO0 )#line:200
+    OOOO000000OO0OOO0 =re .sub ("수랑","수량",OOOO000000OO0OOO0 )#line:201
+    OOOO000000OO0OOO0 =re .sub ("kq","kg",OOOO000000OO0OOO0 )#line:202
+    OOOO000000OO0OOO0 =re .sub ("4,5-10","4.5-10kg",OOOO000000OO0OOO0 )#line:203
+    OOOO000000OO0OOO0 =re .sub ("산 ?업 ?자","사업자",OOOO000000OO0OOO0 )#line:204
+    OOOO000000OO0OOO0 =re .sub (" ?Ⅱ ?","표",OOOO000000OO0OOO0 )#line:205
+    OOOO000000OO0OOO0 =re .sub (" ?원 ?창 ?"," 원장",OOOO000000OO0OOO0 )#line:206
+    OOOO000000OO0OOO0 =re .sub ("송 ?재 ?지 ?","소재지",OOOO000000OO0OOO0 )#line:207
+    OOOO000000OO0OOO0 =re .sub (" I "," 1 ",OOOO000000OO0OOO0 )#line:208
+    return OOOO000000OO0OOO0 #line:210
+def Registration_Number (O000O00OOOO0000O0 ):#line:213
+    OO00O0O00OO000OOO =[]#line:214
+    O0OOOOO000O000O0O =" ?사 ?업 ?자? ?등? ?록? ?번? ?호? ?N?o? ?:? ?(\d\d\d)(\d\d)(\d\d\d\d\d) "#line:216
+    OOO00OOO0OO0O0000 =" ?사 ?업 ?자? ?등? ?록? ?번? ?호? ?N?o? ?:? ?(\d{3}) ? ? ?(\d{2}) ?- ?(\d{5})\D"#line:218
+    O0O00OOO0O0O0O0O0 =" ?사 ?업 ?자? ?등? ?록? ?번? ?호? ?N?o? ?:? ?(\d{3}) ?- ?(\d{2}) ? ?(\d{5})\D"#line:219
+    O00OO0OOO00O00O0O =" ?사 ?업 ?자? ?등? ?록? ?번? ?호? ?N?o? ?:? ?(\d{3} ?- ?\d{2} ?- ?\d{5})\D"#line:221
+    O0000O000O0O0O0OO =" ?사 ?업 ?자? ?등? ?록? ?번? ?호? ?N?o? ?:? ?(\d{3} ?- ?\d{2} ?- ?\d{3} ?- ?\d{2})"#line:223
+    O000000O00O00O000 ="\D(\d{3} ?- ?\d{2} ?- ?\d{5})\D"#line:225
+    O0O0O000O0000O00O ="(\d{3} ?- ?\d{2} ?- ?\d{5})\D"#line:226
+    OOO0OO000OOOOO000 =" ?사 ?업 ?자 ? ?등? ?록? ?번? ?호? ?-? ?:? ?"#line:228
+    OOOOO00OO00OOOOO0 =" ?등 ?록 ?번 ?호 ?:? ?"#line:229
+    O000O00OOOO0000O0 =re .sub (O0OOOOO000O000O0O ,r'\1-\2-\3',O000O00OOOO0000O0 )#line:231
+    O000O00OOOO0000O0 =re .sub (OOO00OOO0OO0O0000 ,r'\1-\2-\3',O000O00OOOO0000O0 )#line:232
+    O000O00OOOO0000O0 =re .sub (O0O00OOO0O0O0O0O0 ,r'\1-\2-\3',O000O00OOOO0000O0 )#line:233
+    OOOO00O000OO0O0OO =re .findall (O00OO0OOO00O00O0O ,O000O00OOOO0000O0 )#line:235
+    OO00O0O00OO000OOO .extend (OOOO00O000OO0O0OO )#line:236
+    O000O00OOOO0000O0 =Remover (O00OO0OOO00O00O0O ,O000O00OOOO0000O0 )#line:237
+    OO00OO00OO0OO0000 =re .findall (O0000O000O0O0O0OO ,O000O00OOOO0000O0 )#line:239
+    OO00O0O00OO000OOO .extend (OO00OO00OO0OO0000 )#line:240
+    O000O00OOOO0000O0 =Remover (O0000O000O0O0O0OO ,O000O00OOOO0000O0 )#line:241
+    O0OOOO000O0O0OO0O =re .findall (O000000O00O00O000 ,O000O00OOOO0000O0 )#line:243
+    OO00O0O00OO000OOO .extend (O0OOOO000O0O0OO0O )#line:244
+    O000O00OOOO0000O0 =Remover (O000000O00O00O000 ,O000O00OOOO0000O0 )#line:245
+    O0OO0O00OOO00OO00 =re .findall (O0O0O000O0000O00O ,O000O00OOOO0000O0 )#line:247
+    OO00O0O00OO000OOO .extend (O0OO0O00OOO00OO00 )#line:248
+    O000O00OOOO0000O0 =Remover (O0O0O000O0000O00O ,O000O00OOOO0000O0 )#line:249
+    O000O00OOOO0000O0 =Remover (OOO0OO000OOOOO000 ,O000O00OOOO0000O0 )#line:251
+    O000O00OOOO0000O0 =Remover (OOOOO00OO00OOOOO0 ,O000O00OOOO0000O0 )#line:252
+    return O000O00OOOO0000O0 ,OO00O0O00OO000OOO #line:254
+def date_strip (OO0O00O00000O0000 ):#line:258
+    if OO0O00O00000O0000 is not None :#line:259
+        for OO0000OO0OOOOOO00 in range (len (OO0O00O00000O0000 )):#line:260
+            OO0O00O00000O0000 [OO0000OO0OOOOOO00 ]=OO0O00O00000O0000 [OO0000OO0OOOOOO00 ].replace ('-',' ')#line:261
+            OO0O00O00000O0000 [OO0000OO0OOOOOO00 ]=OO0O00O00000O0000 [OO0000OO0OOOOOO00 ].replace ('년',' ')#line:262
+            OO0O00O00000O0000 [OO0000OO0OOOOOO00 ]=OO0O00O00000O0000 [OO0000OO0OOOOOO00 ].replace ('월',' ')#line:263
+            OO0O00O00000O0000 [OO0000OO0OOOOOO00 ]=OO0O00O00000O0000 [OO0000OO0OOOOOO00 ].replace ('일',' ')#line:264
+            OO0O00O00000O0000 [OO0000OO0OOOOOO00 ]=OO0O00O00000O0000 [OO0000OO0OOOOOO00 ].strip ()#line:265
+            O00OOO0O00O00000O =OO0O00O00000O0000 [OO0000OO0OOOOOO00 ].split (' ')#line:267
+            try :#line:268
+                if len (O00OOO0O00O00000O )!=3 :#line:269
+                    O00OOO0O00O00000O =[O00000000OO00O00O for O00000000OO00O00O in O00OOO0O00O00000O if O00000000OO00O00O ]#line:270
+                if len (O00OOO0O00O00000O [1 ])!=2 :#line:271
+                    O00OOO0O00O00000O [1 ]='0'+O00OOO0O00O00000O [1 ][0 ]#line:272
+                if len (O00OOO0O00O00000O [2 ])!=2 :#line:273
+                    O00OOO0O00O00000O [2 ]='0'+O00OOO0O00O00000O [2 ][0 ]#line:274
+                OO0O00O00000O0000 [OO0000OO0OOOOOO00 ]=''.join (O00OOO0O00O00000O )#line:275
+            except IndexError :#line:276
+                continue #line:277
+    return OO0O00O00000O0000 #line:278
+def date_formatting (O00O0O0OOO00OO000 ):#line:282
+    if O00O0O0OOO00OO000 is not None :#line:283
+        for OOOOOO0OOO0OO0O0O in range (len (O00O0O0OOO00OO000 )):#line:284
+            O0O0OOOOOO0OOOOO0 =O00O0O0OOO00OO000 [OOOOOO0OOO0OO0O0O ][0 :4 ]+'-'+O00O0O0OOO00OO000 [OOOOOO0OOO0OO0O0O ][4 :6 ]+'-'+O00O0O0OOO00OO000 [OOOOOO0OOO0OO0O0O ][6 :8 ]#line:285
+            O00O0O0OOO00OO000 [OOOOOO0OOO0OO0O0O ]=O0O0OOOOOO0OOOOO0 #line:286
+    return O00O0O0OOO00OO000 #line:288
+def Charge_Date (OOOOOO0OO0OO0OOO0 ):#line:292
+    OO00OOO0O0O000000 =[]#line:293
+    O00O0O0OOOO0O000O =' ?[\[\(]?(20\d{2} ?[ -\/~] ?[0-1]\d ?[ -\/~] ?[0-3]\d)[\]\)]? ?오?전?후? ?[0-2]{0,1}\d? ?:? ?[0-5]{0,1}\d? ?:? ?[0-5]{0,1}\d? ? ?'#line:294
+    O00O00O00000000O0 =' ?[\[\(]?(20\d{2} ?년 ?[0-1]?\d ?월 ?[0-3]?\d ?일) ?[0-2]{0,1}\d? ?[시:;]? ?[0-5]{0,1}\d? ?분? ?'#line:295
+    OOO0OO00OOO0O0O0O =" ?날 ?짜 ?: ?"#line:296
+    O0OOOOOOOO0OOOOO0 =" ?오 ?전 ?\d{1,2}시 ?[-~]? ?오? ?후? ?\d?\d? ?시? ?"#line:297
+    O0O0O000OO0O00000 =" ?\(? ?오 ?전 ?\d?시? ? \d? ?밤?\d?\d?시?\)?"#line:298
+    O0O0OO000O00O000O =" 거 ?래 ?일 ?시 ?: ?"#line:299
+    O000OOOO0000OOOOO =re .findall (O00O0O0OOOO0O000O ,OOOOOO0OO0OO0OOO0 )#line:301
+    O000OOOO0000OOOOO =date_strip (O000OOOO0000OOOOO )#line:302
+    OO00OOO0O0O000000 .extend (date_formatting (O000OOOO0000OOOOO ))#line:303
+    OOOOOO0OO0OO0OOO0 =Remover (O00O0O0OOOO0O000O ,OOOOOO0OO0OO0OOO0 )#line:304
+    O00OO0O0OOO00OOOO =re .findall (O00O00O00000000O0 ,OOOOOO0OO0OO0OOO0 )#line:306
+    O00OO0O0OOO00OOOO =date_strip (O00OO0O0OOO00OOOO )#line:307
+    OO00OOO0O0O000000 .extend (date_formatting (O00OO0O0OOO00OOOO ))#line:308
+    OOOOOO0OO0OO0OOO0 =Remover (O00O00O00000000O0 ,OOOOOO0OO0OO0OOO0 )#line:309
+    OOOOOO0OO0OO0OOO0 =Remover (OOO0OO00OOO0O0O0O ,OOOOOO0OO0OO0OOO0 )#line:311
+    OOOOOO0OO0OO0OOO0 =Remover (O0OOOOOOOO0OOOOO0 ,OOOOOO0OO0OO0OOO0 )#line:312
+    OOOOOO0OO0OO0OOO0 =Remover (O0O0O000OO0O00000 ,OOOOOO0OO0OO0OOO0 )#line:313
+    OOOOOO0OO0OO0OOO0 =Remover (O0O0OO000O00O000O ,OOOOOO0OO0OO0OOO0 )#line:314
+    return OOOOOO0OO0OO0OOO0 ,list (set (OO00OOO0O0O000000 ))#line:316
+def Weight_Filtering (O00000OOO0O0OOOO0 ):#line:320
+    OO0OO0OOOOO0OO000 =[]#line:321
+    OOOO0OOOO0O00000O =[]#line:322
+    if len (O00000OOO0O0OOOO0 )!=0 :#line:323
+        for OO0OOO0O0O0O00OOO in O00000OOO0O0OOOO0 :#line:324
+            OO00O0OOO000OOOOO =re .findall ("\d*\.\d+|\d+",OO0OOO0O0O0O00OOO )#line:325
+            OOOO0OOOO0O00000O .extend (OO00O0OOO000OOOOO )#line:326
+        for O00O0O00OO0000O0O ,OOOOOO0000OOO00O0 in enumerate (OOOO0OOOO0O00000O ):#line:327
+            OOOO0OOOO0O00000O [O00O0O00OO0000O0O ]=float (OOOOOO0000OOO00O0 )#line:328
+        OOO00O0OOOOO0OO0O =max (OOOO0OOOO0O00000O )#line:329
+        OO000O0O000O00OO0 =min (OOOO0OOOO0O00000O )#line:330
+        if OOO00O0OOOOO0OO0O ==OO000O0O000O00OO0 :#line:331
+            OOOO00O0OOO0O00O0 =[O00OOO0OOOO0O0O0O for O00OOO0OOOO0O0O0O in O00000OOO0O0OOOO0 if "이하"in O00OOO0OOOO0O0O0O ]#line:332
+            OO0000000OOOOOOO0 =[O000OOOOO0OOOO0O0 for O000OOOOO0OOOO0O0 in O00000OOO0O0OOOO0 if "미만"or "<"in O000OOOOO0OOOO0O0 ]#line:333
+            if len (OO0000000OOOOOOO0 )>0 :#line:334
+                OO0OO0OOOOO0OO000 .append (str (OOO00O0OOOOO0OO0O )+"kg"+"미만")#line:335
+            elif len (OOOO00O0OOO0O00O0 )>0 :#line:336
+                OO0OO0OOOOO0OO000 .append (str (OOO00O0OOOOO0OO0O )+"kg"+"이하")#line:337
+            else :#line:338
+                OO0OO0OOOOO0OO000 .append (str (OOO00O0OOOOO0OO0O )+"kg")#line:339
+        else :#line:340
+            OOOO00O0OOO0O00O0 =[O0000O000OOO000O0 for O0000O000OOO000O0 in O00000OOO0O0OOOO0 if "이하"in O0000O000OOO000O0 ]#line:342
+            OO0000000OOOOOOO0 =[O00OO0OO0OOO0000O for O00OO0OO0OOO0000O in O00000OOO0O0OOOO0 if "미만"in O00OO0OO0OOO0000O ]#line:343
+            if len (OO0000000OOOOOOO0 )>0 :#line:344
+                OO0OO0OOOOO0OO000 .append (str (OO000O0O000O00OO0 )+"kg"+"이상")#line:345
+                OO0OO0OOOOO0OO000 .append (str (OOO00O0OOOOO0OO0O )+"kg"+"미만")#line:346
+            elif len (OOOO00O0OOO0O00O0 )>0 :#line:347
+                OO0OO0OOOOO0OO000 .append (str (OO000O0O000O00OO0 )+"kg"+"이상")#line:348
+                OO0OO0OOOOO0OO000 .append (str (OOO00O0OOOOO0OO0O )+"kg"+"이하")#line:349
+            else :#line:350
+                OO0OO0OOOOO0OO000 .append (str (OO000O0O000O00OO0 )+"kg ~ "+str (OOO00O0OOOOO0OO0O )+"kg")#line:351
+        return OO0OO0OOOOO0OO000 #line:353
+    else :#line:354
+        return 0 #line:355
+def Weight_Data (O00OOO00OO0000O00 ):#line:358
+    O0OO0OOO0000OOO00 =[]#line:359
+    O0O000OO00OOO000O =' ?체? ?중? ?:? ? ?[\(\[\/]? ?(\d?[\.,]?\d{0,2} ?[-~]? ?\d?[\.,]?<? ?\d{1,3} ?[kK][gGo] ?~?-?이? ?상?이?하?미?만?초?과?)[\)\]\/]? ?'#line:361
+    OO00OOO0OOO00000O =' ?(\d\.\d{1,2}\-\d\.?\d{0,2}0?)'#line:362
+    OOO0O0O0OOOO000OO =' ?\(?~? ?kg\)?'#line:363
+    O00OO00000OOO0000 =' [<>] '#line:364
+    O0O00OO0OOO0OOO0O =re .findall (O0O000OO00OOO000O ,O00OOO00OO0000O00 )#line:366
+    O0OO0OOO0000OOO00 .extend (O0O00OO0OOO0OOO0O )#line:367
+    O00OOO00OO0000O00 =Remover (O0O000OO00OOO000O ,O00OOO00OO0000O00 )#line:368
+    O0O000000OOOO000O =re .findall (OO00OOO0OOO00000O ,O00OOO00OO0000O00 )#line:370
+    O0OO0OOO0000OOO00 .extend (O0O000000OOOO000O )#line:371
+    O00OOO00OO0000O00 =Remover (OO00OOO0OOO00000O ,O00OOO00OO0000O00 )#line:372
+    O00OOO00OO0000O00 =Remover (OOO0O0O0OOOO000OO ,O00OOO00OO0000O00 )#line:374
+    O00OOO00OO0000O00 =Remover (O00OO00000OOO0000 ,O00OOO00OO0000O00 )#line:375
+    O000O000000O0000O =Weight_Filtering (O0OO0OOO0000OOO00 )#line:377
+    if O000O000000O0000O !=0 :#line:378
+        O0OO0OOO0000OOO00 =O000O000000O0000O #line:379
+    return O00OOO00OO0000O00 ,O0OO0OOO0000OOO00 #line:381
+def Animal_Name (OOO0OOOO0OO0OOOO0 ):#line:385
+    OOO0O0OOOO000O0O0 =[]#line:386
+    OOO0O00OOOOOOO0O0 ="[\[\(]? ?동 ?물 ?명 ?:? ?([^진 ?료 ?비? ?][가-힣]{0,3}[^가-힣1-9\(\)]) ?[\]\)]?"#line:387
+    OOO0OOO0O00O0O00O ="[\(]?([가-힣]{2,3}) ?\[\d{9}\]"#line:388
+    O0OOO00OOOOOOO000 =" ?([가-힣]{1,3}) ?\' ?[sS] ?[Tt]? ?o? ?t? ?a? ?l? ?"#line:389
+    O00O0OO0000000000 =re .findall (OOO0O00OOOOOOO0O0 ,OOO0OOOO0OO0OOOO0 )#line:391
+    OOO0O0OOOO000O0O0 .extend (O00O0OO0000000000 )#line:392
+    OOO0OOOO0OO0OOOO0 =Remover (OOO0O00OOOOOOO0O0 ,OOO0OOOO0OO0OOOO0 )#line:393
+    O0OO000O0OO0OOOOO =re .findall (OOO0OOO0O00O0O00O ,OOO0OOOO0OO0OOOO0 )#line:395
+    OOO0O0OOOO000O0O0 .extend (O0OO000O0OO0OOOOO )#line:396
+    OOO0OOOO0OO0OOOO0 =Remover (OOO0OOO0O00O0O00O ,OOO0OOOO0OO0OOOO0 )#line:397
+    OOO0O0OO0OOO0OO00 =re .findall (O0OOO00OOOOOOO000 ,OOO0OOOO0OO0OOOO0 )#line:399
+    OOO0O0OOOO000O0O0 .extend (OOO0O0OO0OOO0OO00 )#line:400
+    OOO0OOOO0OO0OOOO0 =Remover (O0OOO00OOOOOOO000 ,OOO0OOOO0OO0OOOO0 )#line:401
+    return OOO0OOOO0OO0OOOO0 ,OOO0O0OOOO000O0O0 #line:403
+def Non_Texable_item (O0O0O0OOO0O0O00O0 ):#line:407
+    OO0O0O00000OO00OO =[]#line:408
+    OOOOO000O0OOO00O0 =" ?비 ?과 ?세 ?품 ?목 ?합 ?계 ?(-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{2}0)"#line:409
+    OOO0O00O00OOOO0OO =" ?비 ?과 ?세 ?품 ?목 ?합 ?계 ?(-?[1-9]\d{0,2}[,\. ]\d{3})"#line:410
+    OO0OO0OO0000O00O0 =" ?비 ?과 ?세 ?품 ?목 ?합 ?계 ?:? ?(\d{3})"#line:411
+    OOO0OO00O00O00O00 =" ?비 ?과 ?세 ?:? ?-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} ?[\d]{0,1} (-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:412
+    OOOO000O0OO00O00O =" ?비 ?과 ?세 ?:? ?-?[1-9]\d{0,2}[,\.]\d{3} ?[\d]{0,1} (-?[1-9]\d{0,2}[,\.]\d{3})"#line:413
+    O0O0O00OO0OO0O00O =" ?비 ?과 ?세 ?:? ?[\d]{0,1} (-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:414
+    O0000OOO00OOO000O =" ?비 ?과 ?세 ?:? ?[\d]{0,1} (-?[1-9]\d{0,2}[,\.]\d{3})"#line:415
+    O0OOO000OOOO000OO =" ?비 ?과 ?세 \d{1,2} -?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:416
+    O0OO00O00000OOOO0 =" ?비 ?과 ?세 \d{1,2} -?[1-9]\d{0,2}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3})"#line:417
+    OO0O0O0O00000O0OO =" ?비 ?과 ?세 ?:? ?([1-9]\d{0,2})"#line:418
+    OO00OO00O0O0O0O00 =" ?비 ?과 ?세 ?:? ?0?"#line:419
+    OOO0O0O0OO0OOOO0O =" ?면 ?세 ?금 ?액 ?[: ]? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:420
+    O0OO0O00OOOOOO0OO =" ?면 ?세 ?금 ?액 ?[: ]? ?([1-9]\d{0,2}[,\.]\d{3})"#line:421
+    OO0O00000OOOOOOO0 =" ?면 ?세 ?금 ?액 ?[: ]? ?([1-9]\d{0,2})"#line:422
+    O000OOOO000O0O000 =" ?면 ?세 ?금 ?액 ?[: ]? ?0?"#line:423
+    OO000OOO0OOOOO000 =" ?\( ?\* ?\) ?[는은]? 면? ?세? ?품? ?목? ?"#line:424
+    OO0O00O0O0OOO0O0O =" ?물 ?품 ?명 ?앞 ?에 ?"#line:425
+    OO00OOO0O00000OO0 =" ?면 ?세 ?물 ?품 ?이? ?원? ?"#line:426
+    O000OOO0O0O00OOOO =" ?\(?\*?\)?\·? ?표 ?시 ?가? ?되? ?어? ?는?기?"#line:427
+    O00000OOO0OOO000O =" ?있 ?는 ?"#line:428
+    OO000000OO00OO0O0 =" ?되 ?어 ?"#line:429
+    O0O0O0OOO0O0O00O0 =Remover ("\* ?표 ?시 ?가 ?[되퇴] ?어 ?있 ?는 ?항 ?목 ?은 ?비 ?과 ?세 ?",O0O0O0OOO0O0O00O0 )#line:432
+    O0O0O0OOO0O0O00O0 =Remover ("[표시가 ]{0,5} ?[되퇴] ?어 ?있 ?는 ?항 ?목 ?은 ?비 ?과 ?세 ?입 ?니 ?다 ?[\.]?",O0O0O0OOO0O0O00O0 )#line:433
+    O0O0O0OOO0O0O00O0 =Remover ("\* ?표 ?시 ?가 ?",O0O0O0OOO0O0O00O0 )#line:434
+    O0O0O0OOO0O0O00O0 =Remover (" [되퇴] ?어 있 ?는 항 ?목 ?은 ?",O0O0O0OOO0O0O00O0 )#line:435
+    O0O0O0OOO0O0O00O0 =Remover (" ?[되퇴] ?어 ?있 ?는 ?",O0O0O0OOO0O0O00O0 )#line:436
+    O0O0O0OOO0O0O00O0 =Remover ("항 ?목 ?은 ?",O0O0O0OOO0O0O00O0 )#line:437
+    O0O0O0OOO0O0O00O0 =Remover (" ?상 ?품 ?명 ?앞 ?에 ?[\*]?은 ?면 ?세 ?물 ?품 ?입 ?니 ?다 ?[,\.]?",O0O0O0OOO0O0O00O0 )#line:438
+    O0O0O0OOO0O0O00O0 =Remover (" ?입 ?니 ?다 ?[\.]?",O0O0O0OOO0O0O00O0 )#line:439
+    O0OOO00O0OOO0O0O0 =re .findall (OOOOO000O0OOO00O0 ,O0O0O0OOO0O0O00O0 )#line:441
+    OO0O0O00000OO00OO .extend (O0OOO00O0OOO0O0O0 )#line:442
+    O0O0O0OOO0O0O00O0 =Remover (OOOOO000O0OOO00O0 ,O0O0O0OOO0O0O00O0 )#line:443
+    O00OOO0OO0OOO0O00 =re .findall (OOO0O00O00OOOO0OO ,O0O0O0OOO0O0O00O0 )#line:445
+    OO0O0O00000OO00OO .extend (O00OOO0OO0OOO0O00 )#line:446
+    O0O0O0OOO0O0O00O0 =Remover (OOO0O00O00OOOO0OO ,O0O0O0OOO0O0O00O0 )#line:447
+    O00OO000OO00OOOOO =re .findall (OO0OO0OO0000O00O0 ,O0O0O0OOO0O0O00O0 )#line:449
+    OO0O0O00000OO00OO .extend (O00OO000OO00OOOOO )#line:450
+    O0O0O0OOO0O0O00O0 =Remover (OO0OO0OO0000O00O0 ,O0O0O0OOO0O0O00O0 )#line:451
+    O0OOOOO000OOOOOOO =re .findall (OOO0OO00O00O00O00 ,O0O0O0OOO0O0O00O0 )#line:453
+    OO0O0O00000OO00OO .extend (O0OOOOO000OOOOOOO )#line:454
+    O0O0O0OOO0O0O00O0 =Remover (OOO0OO00O00O00O00 ,O0O0O0OOO0O0O00O0 )#line:455
+    OO0O00OO0O00O0O00 =re .findall (OOOO000O0OO00O00O ,O0O0O0OOO0O0O00O0 )#line:457
+    OO0O0O00000OO00OO .extend (OO0O00OO0O00O0O00 )#line:458
+    O0O0O0OOO0O0O00O0 =Remover (OOOO000O0OO00O00O ,O0O0O0OOO0O0O00O0 )#line:459
+    OO0000O0OO000O0O0 =re .findall (O0O0O00OO0OO0O00O ,O0O0O0OOO0O0O00O0 )#line:461
+    OO0O0O00000OO00OO .extend (OO0000O0OO000O0O0 )#line:462
+    O0O0O0OOO0O0O00O0 =Remover (O0O0O00OO0OO0O00O ,O0O0O0OOO0O0O00O0 )#line:463
+    O0OOOO0O00O0O0000 =re .findall (O0000OOO00OOO000O ,O0O0O0OOO0O0O00O0 )#line:465
+    OO0O0O00000OO00OO .extend (O0OOOO0O00O0O0000 )#line:466
+    O0O0O0OOO0O0O00O0 =Remover (O0000OOO00OOO000O ,O0O0O0OOO0O0O00O0 )#line:467
+    OOOOO0000OOO00OO0 =re .findall (O0OOO000OOOO000OO ,O0O0O0OOO0O0O00O0 )#line:469
+    OO0O0O00000OO00OO .extend (OOOOO0000OOO00OO0 )#line:470
+    O0O0O0OOO0O0O00O0 =Remover (O0OOO000OOOO000OO ,O0O0O0OOO0O0O00O0 )#line:471
+    OO00OOOOO0O0OOOO0 =re .findall (O0OO00O00000OOOO0 ,O0O0O0OOO0O0O00O0 )#line:473
+    OO0O0O00000OO00OO .extend (OO00OOOOO0O0OOOO0 )#line:474
+    O0O0O0OOO0O0O00O0 =Remover (O0OO00O00000OOOO0 ,O0O0O0OOO0O0O00O0 )#line:475
+    O0O0O0OOO0O0O00O0 =Remover (OO0O0O0O00000O0OO ,O0O0O0OOO0O0O00O0 )#line:477
+    OOO00O0OO0O0OOOO0 =re .findall (OO00OO00O0O0O0O00 ,O0O0O0OOO0O0O00O0 )#line:479
+    OO0O0O00000OO00OO .extend (OOO00O0OO0O0OOOO0 )#line:480
+    O0O0O0OOO0O0O00O0 =Remover (OO00OO00O0O0O0O00 ,O0O0O0OOO0O0O00O0 )#line:481
+    O0OOO0OOO00000O00 =re .findall (OOO0O0O0OO0OOOO0O ,O0O0O0OOO0O0O00O0 )#line:483
+    OO0O0O00000OO00OO .extend (O0OOO0OOO00000O00 )#line:484
+    O0O0O0OOO0O0O00O0 =Remover (OOO0O0O0OO0OOOO0O ,O0O0O0OOO0O0O00O0 )#line:485
+    OO00OO0O00O0OO000 =re .findall (O0OO0O00OOOOOO0OO ,O0O0O0OOO0O0O00O0 )#line:487
+    OO0O0O00000OO00OO .extend (OO00OO0O00O0OO000 )#line:488
+    O0O0O0OOO0O0O00O0 =Remover (O0OO0O00OOOOOO0OO ,O0O0O0OOO0O0O00O0 )#line:489
+    OO0OO00000O0O000O =re .findall (OO0O00000OOOOOOO0 ,O0O0O0OOO0O0O00O0 )#line:491
+    OO0O0O00000OO00OO .extend (OO0OO00000O0O000O )#line:492
+    O0O0O0OOO0O0O00O0 =Remover (OO0O00000OOOOOOO0 ,O0O0O0OOO0O0O00O0 )#line:493
+    O0O0O0OOO0O0O00O0 =Remover (O000OOOO000O0O000 ,O0O0O0OOO0O0O00O0 )#line:495
+    O0O0O0OOO0O0O00O0 =Remover (OO000OOO0OOOOO000 ,O0O0O0OOO0O0O00O0 )#line:496
+    O0O0O0OOO0O0O00O0 =Remover (OO0O00O0O0OOO0O0O ,O0O0O0OOO0O0O00O0 )#line:497
+    O0O0O0OOO0O0O00O0 =Remover (OO00OOO0O00000OO0 ,O0O0O0OOO0O0O00O0 )#line:498
+    O0O0O0OOO0O0O00O0 =Remover (O000OOO0O0O00OOOO ,O0O0O0OOO0O0O00O0 )#line:499
+    O0O0O0OOO0O0O00O0 =Remover (O00000OOO0OOO000O ,O0O0O0OOO0O0O00O0 )#line:500
+    O0O0O0OOO0O0O00O0 =Remover (OO000000OO00OO0O0 ,O0O0O0OOO0O0O00O0 )#line:501
+    return O0O0O0OOO0O0O00O0 ,OO0O0O00000OO00OO #line:503
+def Texable_item (O0OO0O00O000OOO00 ):#line:507
+    O0O0000000O0OO0O0 =[]#line:508
+    O00OOOOO000OOOO00 =" ?[고과] ?세 ?[품불] ?[목복독] ?[합업] ?계 ?:? ?-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:509
+    OOOOOOO0OO0OO0OO0 =" ?[고과] ?세 ?[품불] ?[목복독] ?[합업] ?계 ?:? ?-?[1-9]\d{0,2}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3})"#line:510
+    O0OO000O00000OO00 =" ?[고과] ?세 ?[품불] ?[목복독] ?[합업] ?계 ?:? ?(-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:511
+    O000OO0O0OO0OO0OO =" ?[고과] ?세 ?[품불] ?[목복독] ?[합업] ?계 ?:? ?(-?[1-9]\d{0,2}[,\.]\d{3})"#line:512
+    O0OO0O000000000OO =" ?[고과] ?세 ?[품불] ?[목복독] ?[합업] ?계 ?:? ?(-?[1-9]\d{0,2})"#line:513
+    OOO00O00OOO0OO00O =" ?[고과] ?세 ?[품불] ?[목복독] ?[합업] ?계 ?:? ?-?0?"#line:514
+    O0OO0O00O0000000O =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}"#line:515
+    OO0OOOO0O0OO0OOOO =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}) ?[1-9]\d{0,2}[,\.]\d{3}"#line:516
+    O0O00O000O000O0O0 =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ([1-9]\d{0,2}) [1-9]\d{0,2}"#line:517
+    O0O00OOOO000OOOOO =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:518
+    O0OO0OOOOOO0O0OO0 =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3})"#line:519
+    OO000OOOO0OOOO0O0 =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ([1-9]\d{0,2})"#line:520
+    OO0OO0O0OOOOO00O0 =" ?[고과] ?세 ?공 ?급 ?가 ?액 ?:? ?0?"#line:521
+    OOO0000OOOOOOO00O =re .findall (O00OOOOO000OOOO00 ,O0OO0O00O000OOO00 )#line:523
+    O0O0000000O0OO0O0 .extend (OOO0000OOOOOOO00O )#line:524
+    O0OO0O00O000OOO00 =Remover (O00OOOOO000OOOO00 ,O0OO0O00O000OOO00 )#line:525
+    OOOO000O000O0O000 =re .findall (OOOOOOO0OO0OO0OO0 ,O0OO0O00O000OOO00 )#line:527
+    O0O0000000O0OO0O0 .extend (OOOO000O000O0O000 )#line:528
+    O0OO0O00O000OOO00 =Remover (OOOOOOO0OO0OO0OO0 ,O0OO0O00O000OOO00 )#line:529
+    OO000000OOOO0O00O =re .findall (O0OO000O00000OO00 ,O0OO0O00O000OOO00 )#line:531
+    O0O0000000O0OO0O0 .extend (OO000000OOOO0O00O )#line:532
+    O0OO0O00O000OOO00 =Remover (O0OO000O00000OO00 ,O0OO0O00O000OOO00 )#line:533
+    OOOOO00O00O0O00O0 =re .findall (O000OO0O0OO0OO0OO ,O0OO0O00O000OOO00 )#line:535
+    O0O0000000O0OO0O0 .extend (OOOOO00O00O0O00O0 )#line:536
+    O0OO0O00O000OOO00 =Remover (O000OO0O0OO0OO0OO ,O0OO0O00O000OOO00 )#line:537
+    OO00O0O0OOO000OO0 =re .findall (O0OO0O000000000OO ,O0OO0O00O000OOO00 )#line:539
+    O0O0000000O0OO0O0 .extend (OO00O0O0OOO000OO0 )#line:540
+    O0OO0O00O000OOO00 =Remover (O0OO0O000000000OO ,O0OO0O00O000OOO00 )#line:541
+    O0OO0O00O000OOO00 =Remover (OOO00O00OOO0OO00O ,O0OO0O00O000OOO00 )#line:543
+    O0OOO000OOO000O00 =re .findall (O0OO0O00O0000000O ,O0OO0O00O000OOO00 )#line:545
+    O0O0000000O0OO0O0 .extend (O0OOO000OOO000O00 )#line:546
+    O0OO0O00O000OOO00 =Remover (O0OO0O00O0000000O ,O0OO0O00O000OOO00 )#line:547
+    O00O00OOOOOO0O000 =re .findall (OO0OOOO0O0OO0OOOO ,O0OO0O00O000OOO00 )#line:549
+    O0O0000000O0OO0O0 .extend (O00O00OOOOOO0O000 )#line:550
+    O0OO0O00O000OOO00 =Remover (OO0OOOO0O0OO0OOOO ,O0OO0O00O000OOO00 )#line:551
+    OOOOO00O0OOOOOOO0 =re .findall (O0O00O000O000O0O0 ,O0OO0O00O000OOO00 )#line:553
+    O0O0000000O0OO0O0 .extend (OOOOO00O0OOOOOOO0 )#line:554
+    O0OO0O00O000OOO00 =Remover (O0O00O000O000O0O0 ,O0OO0O00O000OOO00 )#line:555
+    OOO000OO00O00O00O =re .findall (O0O00OOOO000OOOOO ,O0OO0O00O000OOO00 )#line:557
+    O0O0000000O0OO0O0 .extend (OOO000OO00O00O00O )#line:558
+    O0OO0O00O000OOO00 =Remover (O0O00OOOO000OOOOO ,O0OO0O00O000OOO00 )#line:559
+    OO0OO0O000000OOOO =re .findall (O0OO0OOOOOO0O0OO0 ,O0OO0O00O000OOO00 )#line:561
+    O0O0000000O0OO0O0 .extend (OO0OO0O000000OOOO )#line:562
+    O0OO0O00O000OOO00 =Remover (O0OO0OOOOOO0O0OO0 ,O0OO0O00O000OOO00 )#line:563
+    O00OO0000000000OO =re .findall (OO000OOOO0OOOO0O0 ,O0OO0O00O000OOO00 )#line:565
+    O0O0000000O0OO0O0 .extend (O00OO0000000000OO )#line:566
+    O0OO0O00O000OOO00 =Remover (OO000OOOO0OOOO0O0 ,O0OO0O00O000OOO00 )#line:567
+    O0OO0O00O000OOO00 =Remover (OO0OO0O0OOOOO00O0 ,O0OO0O00O000OOO00 )#line:569
+    O0O000O0OO00000OO =find_one (O0O0000000O0OO0O0 )#line:570
+    if O0O000O0OO00000OO !=0 :#line:572
+        O0O0000000O0OO0O0 =O0O000O0OO00000OO #line:573
+    return O0OO0O00O000OOO00 ,O0O0000000O0OO0O0 #line:574
+def Tex (OOO000OOO0O00000O ):#line:578
+    OO0OOO0OOOOO0OOO0 =[]#line:579
+    O0O0O0O0OOO0000O0 =" ?[과고] ?세 ?품 ?[목독] ?에 ?포 ?[함힘] ?된 ?부 ?[가기] ?세 ?:? ?-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:580
+    OOO00OO000O0OOO0O =" ?[과고] ?세 ?품 ?[목독] ?에 ?포 ?[함힘] ?된 ?부 ?[가기] ?세 ?:? ?-?[1-9]\d{0,2}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3})"#line:581
+    O00OO0O00O00OO00O =" ?[과고] ?세 ?품 ?[목독] ?에 ?포 ?[함힘] ?된 ?부 ?[가기] ?세 ?:? ?(-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:582
+    O00OO000000OO00O0 =" ?[과고] ?세 ?품 ?[목독] ?에 ?포 ?[함힘] ?된 ?부 ?[가기] ?세 ?:? ?(-?[1-9]\d{0,2}[,\.]\d{3})"#line:583
+    OO0000OOO0OO00O0O =" ?[과고] ?세 ?품 ?[목독] ?에 ?포 ?[함힘] ?된 ?부 ?[가기] ?세 ?:? ?(-?[1-9]\d{0,2})"#line:584
+    OO0O0O0O0OOO0O000 =" ?[과고] ?세 ?품 ?[목독] ?에 ?포 ?[함힘] ?된 ?부 ?[가기] ?세 ?:? ?-?0?"#line:585
+    OO0000OOOOO000OOO =" ?부 ?가 ?세 ?액? ?:? ?-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:586
+    OO0OO00000O0OO00O =" ?부 ?가 ?세 ?액? ?:? ?-?[1-9]\d{0,2}[,\.]\d{3} (-?[1-9]\d{0,2}[,\.]\d{3})"#line:587
+    O0000O0O00OO00OOO =" ?부 ?가 ?세 ?액? ?:? ?(-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:588
+    O0O00O0000OO0O000 =" ?부 ?가 ?세 ?액? ?:? ?(-?[1-9]\d{0,2}[,\.]\d{3})"#line:589
+    O0OO00OO0000O0O0O =" ?부 ?가 ?세 ?액? ?:? ?(-?[1-9]\d{0,2})"#line:590
+    O00OOOOOOOOOOOOOO =" ?부 ?가 ?세 ?액? ?:? ?-?0?"#line:591
+    O0000OOO0OO00OO0O =" ?[\(\[]? ?세 ?금 ?합 ?계 ?[\)\]]? ?(-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}"#line:592
+    O0OO0000O0OO000OO =" ?[\(\[]? ?세 ?금 ?합 ?계 ?[\)\]]? ?(-?[1-9]\d{0,2}[,\.]\d{3}) ?[1-9]\d{0,2}[,\.]\d{3}"#line:593
+    O000OO0O0O0OOO000 =" ?[\(\[]? ?세 ?금 ?합 ?계 ?[\)\]]? ?(-?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:594
+    OOOO00OOO0O0OO0O0 =" ?[\(\[]? ?세 ?금 ?합 ?계 ?[\)\]]? ?(-?[1-9]\d{0,2}[,\.]\d{3})"#line:595
+    O0OO0O0OOO00OO00O =" ?부 ?가 ?가 ?치 ?세 ?:? ?(\d{0,3}[,\.]?\d{0,3}) ?원? ? ?(\d{0,3}[,\.]?\d{0,3}) ?원?액? ?:? ?행? ?일? ?:?"#line:596
+    O00OOO0O0O00OOOO0 =re .findall (O0O0O0O0OOO0000O0 ,OOO000OOO0O00000O )#line:598
+    OO0OOO0OOOOO0OOO0 .extend (O00OOO0O0O00OOOO0 )#line:599
+    OOO000OOO0O00000O =Remover (O0O0O0O0OOO0000O0 ,OOO000OOO0O00000O )#line:600
+    O0O0OO00OO0OOOO0O =re .findall (OOO00OO000O0OOO0O ,OOO000OOO0O00000O )#line:602
+    OO0OOO0OOOOO0OOO0 .extend (O0O0OO00OO0OOOO0O )#line:603
+    OOO000OOO0O00000O =Remover (OOO00OO000O0OOO0O ,OOO000OOO0O00000O )#line:604
+    OOO0O00OO000000O0 =re .findall (O00OO0O00O00OO00O ,OOO000OOO0O00000O )#line:606
+    OO0OOO0OOOOO0OOO0 .extend (OOO0O00OO000000O0 )#line:607
+    OOO000OOO0O00000O =Remover (O00OO0O00O00OO00O ,OOO000OOO0O00000O )#line:608
+    OO0O0OO00O00OO000 =re .findall (O00OO000000OO00O0 ,OOO000OOO0O00000O )#line:610
+    OO0OOO0OOOOO0OOO0 .extend (OO0O0OO00O00OO000 )#line:611
+    OOO000OOO0O00000O =Remover (O00OO000000OO00O0 ,OOO000OOO0O00000O )#line:612
+    OOO0OO000OO0O00O0 =re .findall (OO0000OOO0OO00O0O ,OOO000OOO0O00000O )#line:614
+    OO0OOO0OOOOO0OOO0 .extend (OOO0OO000OO0O00O0 )#line:615
+    OOO000OOO0O00000O =Remover (OO0000OOO0OO00O0O ,OOO000OOO0O00000O )#line:616
+    OOO000OOO0O00000O =Remover (OO0O0O0O0OOO0O000 ,OOO000OOO0O00000O )#line:618
+    O00O0O0OO00OO0O0O =re .findall (OO0000OOOOO000OOO ,OOO000OOO0O00000O )#line:620
+    OO0OOO0OOOOO0OOO0 .extend (O00O0O0OO00OO0O0O )#line:621
+    OOO000OOO0O00000O =Remover (OO0000OOOOO000OOO ,OOO000OOO0O00000O )#line:622
+    O000OO00O0OO0000O =re .findall (OO0OO00000O0OO00O ,OOO000OOO0O00000O )#line:624
+    OO0OOO0OOOOO0OOO0 .extend (O000OO00O0OO0000O )#line:625
+    OOO000OOO0O00000O =Remover (OO0OO00000O0OO00O ,OOO000OOO0O00000O )#line:626
+    OOOO0OOO0O0OOO00O =re .findall (O0000O0O00OO00OOO ,OOO000OOO0O00000O )#line:628
+    OO0OOO0OOOOO0OOO0 .extend (OOOO0OOO0O0OOO00O )#line:629
+    OOO000OOO0O00000O =Remover (O0000O0O00OO00OOO ,OOO000OOO0O00000O )#line:630
+    OO00OO0OO0OOOO00O =re .findall (O0O00O0000OO0O000 ,OOO000OOO0O00000O )#line:632
+    OO0OOO0OOOOO0OOO0 .extend (OO00OO0OO0OOOO00O )#line:633
+    OOO000OOO0O00000O =Remover (O0O00O0000OO0O000 ,OOO000OOO0O00000O )#line:634
+    OOO0OOOO00O0OOO00 =re .findall (O0OO00OO0000O0O0O ,OOO000OOO0O00000O )#line:636
+    OO0OOO0OOOOO0OOO0 .extend (OOO0OOOO00O0OOO00 )#line:637
+    OOO000OOO0O00000O =Remover (O0OO00OO0000O0O0O ,OOO000OOO0O00000O )#line:638
+    OOO000OOO0O00000O =Remover (O00OOOOOOOOOOOOOO ,OOO000OOO0O00000O )#line:640
+    OO0OOO0O0O00OOO00 =re .findall (O0000OOO0OO00OO0O ,OOO000OOO0O00000O )#line:642
+    OO0OOO0OOOOO0OOO0 .extend (OO0OOO0O0O00OOO00 )#line:643
+    OOO000OOO0O00000O =Remover (O0000OOO0OO00OO0O ,OOO000OOO0O00000O )#line:644
+    O0OOOOOO000OOOOO0 =re .findall (O0OO0000O0OO000OO ,OOO000OOO0O00000O )#line:646
+    OO0OOO0OOOOO0OOO0 .extend (O0OOOOOO000OOOOO0 )#line:647
+    OOO000OOO0O00000O =Remover (O0OO0000O0OO000OO ,OOO000OOO0O00000O )#line:648
+    O00O0OO0OO000O00O =re .findall (O000OO0O0O0OOO000 ,OOO000OOO0O00000O )#line:650
+    OO0OOO0OOOOO0OOO0 .extend (O00O0OO0OO000O00O )#line:651
+    OOO000OOO0O00000O =Remover (O000OO0O0O0OOO000 ,OOO000OOO0O00000O )#line:652
+    OOOOO00O0O00O000O =re .findall (OOOO00OOO0O0OO0O0 ,OOO000OOO0O00000O )#line:654
+    OO0OOO0OOOOO0OOO0 .extend (OOOOO00O0O00O000O )#line:655
+    OOO000OOO0O00000O =Remover (OOOO00OOO0O0OO0O0 ,OOO000OOO0O00000O )#line:656
+    O00OOOOO0O0O0O000 =re .findall (O0OO0O0OOO00OO00O ,OOO000OOO0O00000O )#line:658
+    OO0OOO0OOOOO0OOO0 .extend (O00OOOOO0O0O0O000 )#line:659
+    OOO000OOO0O00000O =Remover (O0OO0O0OOO00OO00O ,OOO000OOO0O00000O )#line:660
+    OOO0OO0OO0O00O000 =find_one (OO0OOO0OOOOO0OOO0 )#line:662
+    if OOO0OO0OO0O00O000 !=0 :#line:663
+        OO0OOO0OOOOO0OOO0 =OOO0OO0OO0O00O000 #line:664
+    return OOO000OOO0O00000O ,OO0OOO0OOOOO0OOO0 #line:665
+def Phone_Number (OO0O0O0OOO0O00OOO ):#line:669
+    OO0OOOO00O00O00O0 =[]#line:670
+    OO00OOOOO00O00O00 =[]#line:671
+    OO0OO0OOOOO0OO0OO =''#line:672
+    O0OOO0OOOO0O0000O =" ?전? ?화? ?번? ?호?:? ?핸? ?드? ?폰? ?:?\D(01[0|6-9][-]?\d{3,4}[-]?\d{4})\D"#line:674
+    OO0O00O00OOO00O0O =" ?전? ?화? ?번? ?호? ?:? ?[\(]?\D(0\d{1,2}-\d{3,4}-\d{4})[\)]?"#line:675
+    O000000O0O0OOOO00 =" ?전? ?화 ?번 ?호 ?:? ?[\(\[]?(0\d{1,2}[ -]{0,}\d{3,4}[ -]{0,}\d{4})"#line:676
+    OOOO000OO0OO0O00O =" ?전 ?화 ?번 ?호 ?:? ?(\d{3}-\d{4})"#line:677
+    OO00O0OO00O0OOOO0 =" ?전 ?화 ?번 ?호 ?[:;]? ?"#line:678
+    OO00000OO0000OOO0 =" ?[\(\[]? ?T ?E ?L ?[:;]? ?[\d-]+[\)\]]? ?"#line:679
+    O00OOOOO00000OO0O =" ?T ?E ?L ?[\)\]]? ?(\d{2,4}-?\d{2,4})"#line:680
+    OO0OO00O000O00O00 =" [\(\[]? ?T ?E ?L ?[\)\]]? ?"#line:681
+    OOOO0O000O0O0OOO0 =re .findall (O0OOO0OOOO0O0000O ,OO0O0O0OOO0O00OOO )#line:683
+    OO0OOOO00O00O00O0 .extend (OOOO0O000O0O0OOO0 )#line:684
+    OO0O0O0OOO0O00OOO =Remover (O0OOO0OOOO0O0000O ,OO0O0O0OOO0O00OOO )#line:685
+    OOOOO000OO0000O00 =re .findall (OO0O00O00OOO00O0O ,OO0O0O0OOO0O00OOO )#line:687
+    OO0OOOO00O00O00O0 .extend (OOOOO000OO0000O00 )#line:688
+    OO0O0O0OOO0O00OOO =Remover (OO0O00O00OOO00O0O ,OO0O0O0OOO0O00OOO )#line:689
+    O0O000OO0OO0000OO =re .findall (O000000O0O0OOOO00 ,OO0O0O0OOO0O00OOO )#line:691
+    OO0OOOO00O00O00O0 .extend (O0O000OO0OO0000OO )#line:692
+    OO0O0O0OOO0O00OOO =Remover (O000000O0O0OOOO00 ,OO0O0O0OOO0O00OOO )#line:693
+    OO0000000OO00OOO0 =re .findall (OOOO000OO0OO0O00O ,OO0O0O0OOO0O00OOO )#line:695
+    OO0OOOO00O00O00O0 .extend (OO0000000OO00OOO0 )#line:696
+    OO0O0O0OOO0O00OOO =Remover (OOOO000OO0OO0O00O ,OO0O0O0OOO0O00OOO )#line:697
+    OO0O0O0OOO0O00OOO =Remover (OO00O0OO00O0OOOO0 ,OO0O0O0OOO0O00OOO )#line:699
+    O0O00OO000OO00O0O =re .findall (OO00000OO0000OOO0 ,OO0O0O0OOO0O00OOO )#line:701
+    OO0OOOO00O00O00O0 .extend (O0O00OO000OO00O0O )#line:702
+    OO0O0O0OOO0O00OOO =Remover (OO00000OO0000OOO0 ,OO0O0O0OOO0O00OOO )#line:703
+    OO000O0O0OO000OO0 =re .findall (O00OOOOO00000OO0O ,OO0O0O0OOO0O00OOO )#line:705
+    OO0OOOO00O00O00O0 .extend (OO000O0O0OO000OO0 )#line:706
+    OO0O0O0OOO0O00OOO =Remover (O00OOOOO00000OO0O ,OO0O0O0OOO0O00OOO )#line:707
+    OO0O0O0OOO0O00OOO =Remover (OO0OO00O000O00O00 ,OO0O0O0OOO0O00OOO )#line:709
+    try :#line:710
+        OO0OO0OOOOO0OO0OO =re .sub (' ?- ?','',OO0OOOO00O00O00O0 [0 ])#line:711
+        OO0OO0OOOOO0OO0OO =re .sub (' ','',OO0OO0OOOOO0OO0OO )#line:712
+    except :#line:714
+        OO0OO0OOOOO0OO0OO =''#line:715
+    OO00OOOOO00O00O00 .append (OO0OO0OOOOO0OO0OO )#line:717
+    return OO0O0O0OOO0O00OOO ,OO00OOOOO00O00O00 #line:719
+def Small_Sum (OO0OOO0O0OOOO0O0O ):#line:723
+    O0OO00O00OOO0OO00 =[]#line:724
+    O0OOOOO00O0OO00OO =" ?[소스] ?[계게] ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} [1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:726
+    OO0O0O00O000O0OOO =" ?[소스] ?[계게] ?:? ?([1-9]\d{0,2}[,\.]\d{3} ?[1-9]\d{0,2}[,\.]\d{3})"#line:727
+    O0O000O0OOO00O0OO =" ?[소스] ?[계게] ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:728
+    O00OOOO00O0OOO0OO =" ?[소스] ?[계게] ?:? ?([1-9]\d{0,2}[,\.]\d{3})"#line:729
+    OOOOOO0OO0O0OOO0O =" ?[소스] ?[계게] ?:? ?-?(\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3}) ?"#line:730
+    OO000OOOO00O0OOO0 =" ?[소스] ?[계게] ?:? ?-?(\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3} ?-?\d{0,3}[,\.]?\d{0,3}) ?"#line:731
+    OO00OOOO0000OOO0O =" ?[고과] ?세 ? ?0? ?원?공? ?급? ?[기가]? ?액? ?:? ?(\d{0,3}[,\.]?\d{0,3}) ?원?"#line:732
+    OO0O0O00OO000OO0O =re .findall (O0OOOOO00O0OO00OO ,OO0OOO0O0OOOO0O0O )#line:734
+    O0OO00O00OOO0OO00 .extend (OO0O0O00OO000OO0O )#line:735
+    OO0OOO0O0OOOO0O0O =Remover (O0OOOOO00O0OO00OO ,OO0OOO0O0OOOO0O0O )#line:736
+    O00O00O0O0OO0O00O =re .findall (OO0O0O00O000O0OOO ,OO0OOO0O0OOOO0O0O )#line:738
+    O0OO00O00OOO0OO00 .extend (O00O00O0O0OO0O00O )#line:739
+    OO0OOO0O0OOOO0O0O =Remover (OO0O0O00O000O0OOO ,OO0OOO0O0OOOO0O0O )#line:740
+    O0OOOO00000O000OO =re .findall (O0O000O0OOO00O0OO ,OO0OOO0O0OOOO0O0O )#line:742
+    O0OO00O00OOO0OO00 .extend (O0OOOO00000O000OO )#line:743
+    OO0OOO0O0OOOO0O0O =Remover (O0O000O0OOO00O0OO ,OO0OOO0O0OOOO0O0O )#line:744
+    OO00OO0OO000OO000 =re .findall (O00OOOO00O0OOO0OO ,OO0OOO0O0OOOO0O0O )#line:746
+    O0OO00O00OOO0OO00 .extend (OO00OO0OO000OO000 )#line:747
+    OO0OOO0O0OOOO0O0O =Remover (O00OOOO00O0OOO0OO ,OO0OOO0O0OOOO0O0O )#line:748
+    OO0OOO0O0OOOO0O0O =Remover (OOOOOO0OO0O0OOO0O ,OO0OOO0O0OOOO0O0O )#line:750
+    OO0OOO0O0OOOO0O0O =Remover (OO000OOOO00O0OOO0 ,OO0OOO0O0OOOO0O0O )#line:751
+    O0OOOO0OOOO00OO00 =re .findall (OO00OOOO0000OOO0O ,OO0OOO0O0OOOO0O0O )#line:753
+    O0OO00O00OOO0OO00 .extend (O0OOOO0OOOO00OO00 )#line:754
+    OO0OOO0O0OOOO0O0O =Remover (OO00OOOO0000OOO0O ,OO0OOO0O0OOOO0O0O )#line:755
+    O00O00OOO0OO00O0O =find_one (O0OO00O00OOO0OO00 )#line:757
+    if O00O00OOO0OO00O0O !=0 :#line:759
+        O0OO00O00OOO0OO00 =O00O00OOO0OO00O0O #line:760
+    return OO0OOO0O0OOOO0O0O ,O0OO00O00OOO0OO00 #line:762
+def Total_Sum (OOO00000OO0O00000 ):#line:766
+    OOOOO00OOOO000000 =[]#line:767
+    OOO0O0OOO00O0O0O0 =" ?[가-힣]{2,3} ?의 ?합 ?계 ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) [1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} ?원?"#line:768
+    O0OO0O0OOO0000OO0 =" ?[가-힣]{2,3} ?의 ?합 ?계 ?([1-9]\d{0,2}[,\.]\d{3}) [1-9]\d{0,2}[,\.]\d{3} ?원?"#line:769
+    O0000000O0OOOOOO0 =" ?[가-힣]{2,3} ?의 ?합 ?계 ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원?"#line:770
+    OO0O000O000O00OOO =" ?[가-힣]{2,3} ?의 ?합 ?계 ?([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:771
+    O00O0O0000O000O00 =" ?품? ?목? ?결? ?제? ?금? ?액?총? ?포? ?[함암]? ? ?중? ?간? ?합 ?계 ?금? ?액? ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원?"#line:772
+    OOO00O0OOO0OO00O0 =" ?품? ?목? ?결? ?제? ?금? ?액?총? ?포? ?[함암]? ? ?중? ?간? ?합 ?계 ?금? ?액? ?:? ?([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:773
+    OO00O00O0O0OOOO0O =" ?총? ?청? ?구? ?금 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원? ? ?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} ?원?"#line:774
+    O0O00OOOOOOOOOOOO =" ?총? ?청? ?구? ?금 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}) ?원? ? ?[1-9]\d{0,2}[,\.]\d{3} ?원?"#line:775
+    O00O000OO00O00OOO =" ?총? ?청? ?구? ?금 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원?"#line:776
+    O0O000OOO0000OOOO =" ?총? ?청? ?구? ?금 ?액 ?:? ?([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:777
+    OOO0O000OO0O00OOO =" ?진? Sign ?:? "#line:778
+    O0O0000OOO0O00O0O =" ?결 ?제 ?[요예] ?[청정] ?:? ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:779
+    OO0O0OOOO0O0O0O0O =" ?결 ?제 ?[요예] ?[청정] ?:? ?([1-9]\d{0,2}[,\.]\d{3})"#line:780
+    OOOOOO0O0000O0OO0 =" DC "#line:781
+    OO00OO00O00O00O0O =" ?구? ?분? ?내? ?용? ?일? ?자? ?세? ?부? ?용? ?품? ?내?역? ?품? ?목? ?단? ?가? ? ?수 ?량 금 ?액 ?단? ?가? ?항? ?목? ?"#line:782
+    O0OO0O000O0OO00OO =" ?총? ?청? ?구? ?적? ?용? ?금 ?액 ?:?"#line:783
+    OO00OOO00OOO0O0OO =" ?결? ?제? ?전? ?체? ?품? ?목? ?포? ?함? ?합 ?계 ?:? ? ?0? ?0? ?0?(\d{0,} ?[\d]{0,}[, ]{0,2}\d{0,})원?"#line:784
+    OOO000O0O000O0000 =" ?\( ?V ?A ?T ? ?포? ?함? ?\) ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원?"#line:785
+    OOO000O0OO0O0O0OO =" ?\( ?V ?A ?T ? ?포? ?함? ?\) ?([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:786
+    O0OOOOO0000O0OOO0 =" ?\( ?V ?A ?T ? ?포? ?함? ?\) ?([1-9]\d{0,2}) ?원?"#line:787
+    O0000OOOO0O0O000O =re .findall (OOO0O0OOO00O0O0O0 ,OOO00000OO0O00000 )#line:789
+    OOOOO00OOOO000000 .extend (O0000OOOO0O0O000O )#line:791
+    OOO00000OO0O00000 =Remover (OOO0O0OOO00O0O0O0 ,OOO00000OO0O00000 )#line:792
+    OOO0O000O00O0OO0O =re .findall (O0OO0O0OOO0000OO0 ,OOO00000OO0O00000 )#line:794
+    OOOOO00OOOO000000 .extend (OOO0O000O00O0OO0O )#line:795
+    OOO00000OO0O00000 =Remover (O0OO0O0OOO0000OO0 ,OOO00000OO0O00000 )#line:796
+    OOOOO00OO0OOOO000 =re .findall (O0000000O0OOOOOO0 ,OOO00000OO0O00000 )#line:798
+    OOOOO00OOOO000000 .extend (OOOOO00OO0OOOO000 )#line:799
+    OOO00000OO0O00000 =Remover (O0000000O0OOOOOO0 ,OOO00000OO0O00000 )#line:800
+    O0OOO00OO000OO0OO =re .findall (OO0O000O000O00OOO ,OOO00000OO0O00000 )#line:802
+    OOOOO00OOOO000000 .extend (O0OOO00OO000OO0OO )#line:803
+    OOO00000OO0O00000 =Remover (OO0O000O000O00OOO ,OOO00000OO0O00000 )#line:804
+    O000O0O0OO00OOOOO =re .findall (O00O0O0000O000O00 ,OOO00000OO0O00000 )#line:806
+    OOOOO00OOOO000000 .extend (O000O0O0OO00OOOOO )#line:807
+    OOO00000OO0O00000 =Remover (O00O0O0000O000O00 ,OOO00000OO0O00000 )#line:808
+    OOO0O0OO0O00O0000 =re .findall (OOO00O0OOO0OO00O0 ,OOO00000OO0O00000 )#line:810
+    OOOOO00OOOO000000 .extend (OOO0O0OO0O00O0000 )#line:811
+    OOO00000OO0O00000 =Remover (OOO00O0OOO0OO00O0 ,OOO00000OO0O00000 )#line:812
+    O0000OOO0O00000O0 =re .findall (OO00O00O0O0OOOO0O ,OOO00000OO0O00000 )#line:814
+    OOOOO00OOOO000000 .extend (O0000OOO0O00000O0 )#line:815
+    OOO00000OO0O00000 =Remover (OO00O00O0O0OOOO0O ,OOO00000OO0O00000 )#line:816
+    OO00O000OO0OOOO0O =re .findall (O0O00OOOOOOOOOOOO ,OOO00000OO0O00000 )#line:818
+    OOOOO00OOOO000000 .extend (OO00O000OO0OOOO0O )#line:819
+    OOO00000OO0O00000 =Remover (O0O00OOOOOOOOOOOO ,OOO00000OO0O00000 )#line:820
+    O00OOO0O0OOOO00O0 =re .findall (O00O000OO00O00OOO ,OOO00000OO0O00000 )#line:822
+    OOOOO00OOOO000000 .extend (O00OOO0O0OOOO00O0 )#line:823
+    OOO00000OO0O00000 =Remover (O00O000OO00O00OOO ,OOO00000OO0O00000 )#line:824
+    OO0O00O0000OO0OO0 =re .findall (O0O000OOO0000OOOO ,OOO00000OO0O00000 )#line:826
+    OOOOO00OOOO000000 .extend (OO0O00O0000OO0OO0 )#line:827
+    OOO00000OO0O00000 =Remover (O0O000OOO0000OOOO ,OOO00000OO0O00000 )#line:828
+    OOO00000OO0O00000 =Remover (OOO0O000OO0O00OOO ,OOO00000OO0O00000 )#line:830
+    OO00OO0OOO0OO00O0 =re .findall (O0O0000OOO0O00O0O ,OOO00000OO0O00000 )#line:832
+    OOOOO00OOOO000000 .extend (OO00OO0OOO0OO00O0 )#line:833
+    OOO00000OO0O00000 =Remover (O0O0000OOO0O00O0O ,OOO00000OO0O00000 )#line:834
+    O00OOOO0O00O0O00O =re .findall (OO0O0OOOO0O0O0O0O ,OOO00000OO0O00000 )#line:836
+    OOOOO00OOOO000000 .extend (O00OOOO0O00O0O00O )#line:837
+    OOO00000OO0O00000 =Remover (OO0O0OOOO0O0O0O0O ,OOO00000OO0O00000 )#line:838
+    OOO00000OO0O00000 =Remover (OOOOOO0O0000O0OO0 ,OOO00000OO0O00000 )#line:840
+    OOO00000OO0O00000 =Remover (OO00OO00O00O00O0O ,OOO00000OO0O00000 )#line:841
+    OOO00000OO0O00000 =Remover (O0OO0O000O0OO00OO ,OOO00000OO0O00000 )#line:842
+    OOO000O0OO00000OO =re .findall (OO00OOO00OOO0O0OO ,OOO00000OO0O00000 )#line:844
+    OOOOO00OOOO000000 .extend (OOO000O0OO00000OO )#line:845
+    OOO00000OO0O00000 =Remover (OO00OOO00OOO0O0OO ,OOO00000OO0O00000 )#line:846
+    O00O00OOO00000OO0 =re .findall (OOO000O0O000O0000 ,OOO00000OO0O00000 )#line:848
+    OOOOO00OOOO000000 .extend (O00O00OOO00000OO0 )#line:849
+    OOO00000OO0O00000 =Remover (OOO000O0O000O0000 ,OOO00000OO0O00000 )#line:850
+    O0O0OO0O000OOOO0O =re .findall (OOO000O0OO0O0O0OO ,OOO00000OO0O00000 )#line:852
+    OOOOO00OOOO000000 .extend (O0O0OO0O000OOOO0O )#line:853
+    OOO00000OO0O00000 =Remover (OOO000O0OO0O0O0OO ,OOO00000OO0O00000 )#line:854
+    O000OO0O00OO00OOO =re .findall (O0OOOOO0000O0OOO0 ,OOO00000OO0O00000 )#line:856
+    OOOOO00OOOO000000 .extend (O000OO0O00OO00OOO )#line:857
+    OOO00000OO0O00000 =Remover (O0OOOOO0000O0OOO0 ,OOO00000OO0O00000 )#line:858
+    O0O00O0OO0O00O0OO =find_one (OOOOO00OOOO000000 )#line:861
+    if O0O00O0OO0O00O0OO !=0 :#line:862
+        OOOOO00OOOO000000 =O0O00O0OO0O00O0OO #line:863
+    return OOO00000OO0O00000 ,OOOOO00OOOO000000 #line:864
+def Discount (O00O0OO0OO00O0000 ):#line:868
+    OO000O0O000O0000O =[]#line:869
+    O00OO00OOO0OO0O00 ="\(? ?[CcPp] ?:? ?-?(\d{1,3} ?%)\)?"#line:871
+    OO00OO0O0O00O0O00 ="\( ?[PpCc] ?:? ?\d{1,2}[\., ]{1,2}\d{1,2} ?%?\)"#line:872
+    O0OOOOOO00O0O00OO =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?\/?\(? ?[가-힣A-Za-z]{0,3}? ?\? ?:? ?-?[1-9]\d{0,2} ?[,\.] ?\d{1,3} ?[,\.] ?\d{1,3} ?원?"#line:873
+    O0000OOO000O0000O =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?\/?\(? ?[가-힣A-Za-z]{0,3}? ?\? ?:? ?-?[1-9]\d{0,2} ?[,\.] ?\d{1,3} ?원?"#line:874
+    O00OO0OOOO000OO00 =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?\/?\(? ?[가-힣A-Za-z]{0,3}? ?\? ?:? ?\d ?(- ?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3})"#line:875
+    OOOOO0O00O0O0OOO0 =" ?\(? ?할 ?인 ?\d{1,3} ?% ?\)?|\(? ?\d{1,3} ?% ? ?할 ?인 ?이? ?벤? ?트? ?\)? ?원?"#line:876
+    OOO00000O00O0OOO0 =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? ?\d ?(- ?[1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원?"#line:877
+    O0O0O0O0O00OOOO00 =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? \d{1,2} (-[1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:878
+    OO00O00O0O00O00O0 =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? \d{1,2} [1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} (-\d{1,3}[,\.]\d{3}[,\.]\d{3})"#line:879
+    O00OOOOO00O00OO00 =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? \d{1,2} [1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} (-\d{1,3}[,\.]\d{3})"#line:880
+    OOOO0OOO00OO0OOOO =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? \d{1,2} [1-9]\d{0,2}[,\.]\d{3} (-\d{1,3}[,\.]\d{3}[,\.]\d{3})"#line:881
+    O0O000OO0OOOO0O00 =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? \d{1,2} [1-9]\d{0,2}[,\.]\d{3} (-\d{1,3}[,\.]\d{3})"#line:882
+    OO00000OOO0O000OO =" ?진? ?료? ?추? ?가? ?등? ?급? ?할 ?인 ?금? ?액? ?:? ?(-?\d{0,3}[\.,]?\d{0,3}) ?원?"#line:883
+    O0OOOOOOOOO0OOOO0 =" ?백? ?신? ?추? ?가? ?할 ?증 ?액? ?:? ?\+? ?\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3} ?원?\+? ?\d{0,3}[,\.]?\d{0,3} ? ?원?"#line:884
+    O0000O000OOO0O0O0 =re .findall (O00OO00OOO0OO0O00 ,O00O0OO0OO00O0000 )#line:886
+    OO000O0O000O0000O .extend (O0000O000OOO0O0O0 )#line:887
+    O00O0OO0OO00O0000 =Remover (O00OO00OOO0OO0O00 ,O00O0OO0OO00O0000 )#line:888
+    O0OO0OO0000OO0O0O =re .findall (OO00OO0O0O00O0O00 ,O00O0OO0OO00O0000 )#line:890
+    OO000O0O000O0000O .extend (O0OO0OO0000OO0O0O )#line:891
+    O00O0OO0OO00O0000 =Remover (OO00OO0O0O00O0O00 ,O00O0OO0OO00O0000 )#line:892
+    OO00OO0O00OO00O0O =re .findall (O0OOOOOO00O0O00OO ,O00O0OO0OO00O0000 )#line:894
+    OO000O0O000O0000O .extend (OO00OO0O00OO00O0O )#line:895
+    O00O0OO0OO00O0000 =Remover (O0OOOOOO00O0O00OO ,O00O0OO0OO00O0000 )#line:896
+    O00OO000O000OO0OO =re .findall (O0000OOO000O0000O ,O00O0OO0OO00O0000 )#line:898
+    OO000O0O000O0000O .extend (O00OO000O000OO0OO )#line:899
+    O00O0OO0OO00O0000 =Remover (O0000OOO000O0000O ,O00O0OO0OO00O0000 )#line:900
+    O0OOO0OOOOOO00OOO =re .findall (O00OO0OOOO000OO00 ,O00O0OO0OO00O0000 )#line:902
+    OO000O0O000O0000O .extend (O0OOO0OOOOOO00OOO )#line:903
+    O00O0OO0OO00O0000 =Remover (O00OO0OOOO000OO00 ,O00O0OO0OO00O0000 )#line:904
+    O0O0OO0O0O0OO0O0O =re .findall (OOOOO0O00O0O0OOO0 ,O00O0OO0OO00O0000 )#line:906
+    OO000O0O000O0000O .extend (O0O0OO0O0O0OO0O0O )#line:907
+    O00O0OO0OO00O0000 =Remover (OOOOO0O00O0O0OOO0 ,O00O0OO0OO00O0000 )#line:908
+    O0O0O00OO0O0O0OO0 =re .findall (OOO00000O00O0OOO0 ,O00O0OO0OO00O0000 )#line:910
+    OO000O0O000O0000O .extend (O0O0O00OO0O0O0OO0 )#line:911
+    O00O0OO0OO00O0000 =Remover (OOO00000O00O0OOO0 ,O00O0OO0OO00O0000 )#line:912
+    O00OOOO0O0000OOO0 =re .findall (O0O0O0O0O00OOOO00 ,O00O0OO0OO00O0000 )#line:914
+    OO000O0O000O0000O .extend (O00OOOO0O0000OOO0 )#line:915
+    O00O0OO0OO00O0000 =Remover (O0O0O0O0O00OOOO00 ,O00O0OO0OO00O0000 )#line:916
+    O00O000O00OOO0O0O =re .findall (OO00O00O0O00O00O0 ,O00O0OO0OO00O0000 )#line:918
+    OO000O0O000O0000O .extend (O00O000O00OOO0O0O )#line:919
+    O00O0OO0OO00O0000 =Remover (OO00O00O0O00O00O0 ,O00O0OO0OO00O0000 )#line:920
+    OOO00O00OO00O0OOO =re .findall (O00OOOOO00O00OO00 ,O00O0OO0OO00O0000 )#line:922
+    OO000O0O000O0000O .extend (OOO00O00OO00O0OOO )#line:923
+    O00O0OO0OO00O0000 =Remover (O00OOOOO00O00OO00 ,O00O0OO0OO00O0000 )#line:924
+    OOOO000OOO0OO0O0O =re .findall (OOOO0OOO00OO0OOOO ,O00O0OO0OO00O0000 )#line:926
+    OO000O0O000O0000O .extend (OOOO000OOO0OO0O0O )#line:927
+    O00O0OO0OO00O0000 =Remover (OOOO0OOO00OO0OOOO ,O00O0OO0OO00O0000 )#line:928
+    OO0000000O00O0O00 =re .findall (O0O000OO0OOOO0O00 ,O00O0OO0OO00O0000 )#line:930
+    OO000O0O000O0000O .extend (OO0000000O00O0O00 )#line:931
+    O00O0OO0OO00O0000 =Remover (O0O000OO0OOOO0O00 ,O00O0OO0OO00O0000 )#line:932
+    O0OOOOO00000O0O0O =re .findall (OO00000OOO0O000OO ,O00O0OO0OO00O0000 )#line:934
+    OO000O0O000O0000O .extend (O0OOOOO00000O0O0O )#line:935
+    O00O0OO0OO00O0000 =Remover (OO00000OOO0O000OO ,O00O0OO0OO00O0000 )#line:936
+    O0OOOOO00OOO0O0OO =re .findall (O0OOOOOOOOO0OOOO0 ,O00O0OO0OO00O0000 )#line:939
+    OO000O0O000O0000O .extend (O0OOOOO00OOO0O0OO )#line:940
+    O00O0OO0OO00O0000 =Remover (O0OOOOOOOOO0OOOO0 ,O00O0OO0OO00O0000 )#line:941
+    for OOOOO000OO00O00OO ,O0O0OOO0OOOOOOO00 in enumerate (OO000O0O000O0000O ):#line:944
+        OO000O0O000O0000O [OOOOO000OO00O00OO ]=re .sub ("[ ?진? ?료? ?추? ?가? ?등? ?급? ?할? ?인? ?[가-힣A-Za-z]{0,3}? ?금? ?액? ?:? ?%? ?이? ?벤? ?트? ?할 ?증 ?액?]","",O0O0OOO0OOOOOOO00 )#line:945
+    O000O000O00OO0O0O =find_one (OO000O0O000O0000O )#line:946
+    if O000O000O00OO0O0O !=0 :#line:947
+        OO000O0O000O0000O =O000O000O00OO0O0O #line:948
+    return O00O0OO0OO00O0000 ,OO000O0O000O0000O #line:949
+def Address (O000OO0OOOO0000OO ):#line:953
+    OOO00O0O0O0O0000O =[]#line:954
+    OOOOO0OOOOO0000O0 ="가? ?맹? ?점? ? ?주 ?소 ?:? ?[가-힣]{1,}시? ?[가-힣]{1,}구? ?[가-힣]{0,}\d{0,2} ?[동로][가-힣]{0,}\d{0,3}번? ?길? ?\d{0,3} ?\d? ?층? ?-? ?\d?\d?번? ?지?\d{0,} ?층? ?\d{0,}호?"#line:956
+    OOOO0O0OOOO0O0OOO ="가? ?맹? ?점? ? ?주 ?소 ?:? ?[\D ]+시 ?\D+구 ?\D+[동로]"#line:957
+    O000OOO00OO0OO0O0 ="가 ?맹 ?점 ?명? ?:? ?(\D+병 ?원 ?)"#line:958
+    OO0OOO0O0O00OO0OO =" ?\)? ?정? ?상? ?매? ?입? ?가 ?맹 ?점 ?명? ?:? ?정? ?보? ?즉? ?시? ?결? ?제? ?\/? ?사? ?업? ?자? ?2?4?시?\D+병원"#line:959
+    OO00000O0OO00OOOO ="\( ?\D+ ?동 ?\)"#line:960
+    O000O00OO00O0OO00 =" ?[가-힣]+도 ?[가-힣]+시 ?[가-힣]{0,}구?로?동?번?길? ?[가-힣1-9]{0,}구?로?동?번?길? ?\d?층?"#line:961
+    O0000OOO000O00O0O =re .findall (OOOOO0OOOOO0000O0 ,O000OO0OOOO0000OO )#line:963
+    OOO00O0O0O0O0000O .extend (O0000OOO000O00O0O )#line:964
+    O000OO0OOOO0000OO =Remover (OOOOO0OOOOO0000O0 ,O000OO0OOOO0000OO )#line:965
+    OOO000000O00OO0OO =re .findall (OOOO0O0OOOO0O0OOO ,O000OO0OOOO0000OO )#line:967
+    OOO00O0O0O0O0000O .extend (OOO000000O00OO0OO )#line:968
+    O000OO0OOOO0000OO =Remover (OOOO0O0OOOO0O0OOO ,O000OO0OOOO0000OO )#line:969
+    O0OO00O0OO0OO000O =re .findall (O000OOO00OO0OO0O0 ,O000OO0OOOO0000OO )#line:971
+    OOO00O0O0O0O0000O .extend (O0OO00O0OO0OO000O )#line:972
+    O000OO0OOOO0000OO =Remover (O000OOO00OO0OO0O0 ,O000OO0OOOO0000OO )#line:973
+    OOOO0O0OOO0OO00OO =re .findall (OO0OOO0O0O00OO0OO ,O000OO0OOOO0000OO )#line:975
+    OOO00O0O0O0O0000O .extend (OOOO0O0OOO0OO00OO )#line:976
+    O000OO0OOOO0000OO =Remover (OO0OOO0O0O00OO0OO ,O000OO0OOOO0000OO )#line:977
+    OOO00OO0OO0000000 =re .findall (OO00000O0OO00OOOO ,O000OO0OOOO0000OO )#line:979
+    OOO00O0O0O0O0000O .extend (OOO00OO0OO0000000 )#line:980
+    O000OO0OOOO0000OO =Remover (OO00000O0OO00OOOO ,O000OO0OOOO0000OO )#line:981
+    O0O0000O000O0O000 =re .findall (O000O00OO00O0OO00 ,O000OO0OOOO0000OO )#line:983
+    OOO00O0O0O0O0000O .extend (O0O0000O000O0O000 )#line:984
+    O000OO0OOOO0000OO =Remover (O000O00OO00O0OO00 ,O000OO0OOOO0000OO )#line:985
+    return O000OO0OOOO0000OO ,OOO00O0O0O0O0000O #line:987
+def Ceo (OO00000O00OOO0O0O ):#line:991
+    OOOOOOOOO000000OO =[]#line:992
+    OOOOO00000O0OOO0O =" ?대 ?표 ?자 ?명? ?:? ?([가-힣]{2,4} ?외? ?[1-9]{0,1} ?명) ?"#line:994
+    O00OOO0OOO00O0OO0 =" ?대 ?표 ?자 ?명? ?:? ?:? ?([가-힣]{2,4})"#line:995
+    OO0OO0000000OOOOO =" ?\[?대 ?표 ?자 ?명? ?\]? ?:? ?([가-힣]{0,4})"#line:996
+    O0OOO0O0OOO000OO0 ="[가-힣]+청? ?구? ?서? ?병? ?원? ? 원 ?장 ?:? ?([가-힣]{0,4})"#line:997
+    O0OO0OOO0000O00O0 =re .findall (OOOOO00000O0OOO0O ,OO00000O00OOO0O0O )#line:999
+    OOOOOOOOO000000OO .extend (O0OO0OOO0000O00O0 )#line:1000
+    OO00000O00OOO0O0O =Remover (OOOOO00000O0OOO0O ,OO00000O00OOO0O0O )#line:1001
+    O00O00000OOOOO000 =re .findall (O00OOO0OOO00O0OO0 ,OO00000O00OOO0O0O )#line:1003
+    OOOOOOOOO000000OO .extend (O00O00000OOOOO000 )#line:1004
+    OO00000O00OOO0O0O =Remover (O00OOO0OOO00O0OO0 ,OO00000O00OOO0O0O )#line:1005
+    O0OO0OO0OO0O00O00 =re .findall (OO0OO0000000OOOOO ,OO00000O00OOO0O0O )#line:1007
+    OOOOOOOOO000000OO .extend (O0OO0OO0OO0O00O00 )#line:1008
+    OO00000O00OOO0O0O =Remover (OO0OO0000000OOOOO ,OO00000O00OOO0O0O )#line:1009
+    O0O0OO0O000000OO0 =re .findall (O0OOO0O0OOO000OO0 ,OO00000O00OOO0O0O )#line:1011
+    OOOOOOOOO000000OO .extend (O0O0OO0O000000OO0 )#line:1012
+    OO00000O00OOO0O0O =Remover (O0OOO0O0OOO000OO0 ,OO00000O00OOO0O0O )#line:1013
+    return OO00000O00OOO0O0O ,OOOOOOOOO000000OO #line:1015
+def Hospital_name (OOO000000OO00OOO0 ):#line:1019
+    O00OOO0000OOOO000 =[]#line:1020
+    O00OO00OO00OOO0OO =" ?병 ?원 ?명 ?:? ?(2? ?4?시? ?[가-힣 24]{2,}병 ?원 ?2? ?4? ?시?) ?"#line:1021
+    O00000O0OOOOO00OO =" ?청 ?구 ? ?원 ?명 ?:? ?(2? ?4?시? ?[가-힣 24]{2,}병 ?원 ?2? ?4? ?시?) ?"#line:1022
+    O00OO0000000O0O0O =" ?병 ?원 ?명 ?:? ?(2? ?4?시? ?[가-힣 24]{2,}센 ?터 ?2? ?4? ?시?) ?"#line:1023
+    O00O0000OOOOO0O0O =" ?청 ?구 ? ?원 ?명 ?:? ?(2? ?4?시? ?[가-힣 24]{2,}센 ?터 ?2? ?4? ?시?) ?"#line:1024
+    OOOOO0OOOO00O0OOO =" ?병 ?원 ?명 ?:? ?"#line:1025
+    O000O0OOOO0OO0OOO =" ?청 ?구 ?원 ?명 ?:? ?"#line:1026
+    O0000O000OO0OO00O ="[가-힣]+ 동 ?물 ?병 ?원 ?"#line:1027
+    OO0O0O000OO0OOO00 =" ?(2?4? ?시? ?[가-힣]{0,} ?2?4?시? ?V?I?P?N? ?[가-힣]+센 ?터 ?)"#line:1028
+    O00O0000OOO000O00 =re .findall (O00OO00OO00OOO0OO ,OOO000000OO00OOO0 )#line:1030
+    O00OOO0000OOOO000 .extend (O00O0000OOO000O00 )#line:1031
+    OOO000000OO00OOO0 =Remover (O00OO00OO00OOO0OO ,OOO000000OO00OOO0 )#line:1032
+    O0O00000O00000O0O =re .findall (O00000O0OOOOO00OO ,OOO000000OO00OOO0 )#line:1034
+    O00OOO0000OOOO000 .extend (O0O00000O00000O0O )#line:1035
+    OOO000000OO00OOO0 =Remover (O00000O0OOOOO00OO ,OOO000000OO00OOO0 )#line:1036
+    OOOO0O00O0000000O =re .findall (O00OO0000000O0O0O ,OOO000000OO00OOO0 )#line:1038
+    O00OOO0000OOOO000 .extend (OOOO0O00O0000000O )#line:1039
+    OOO000000OO00OOO0 =Remover (O00OO0000000O0O0O ,OOO000000OO00OOO0 )#line:1040
+    OO0OO0OO0OO000O0O =re .findall (O00O0000OOOOO0O0O ,OOO000000OO00OOO0 )#line:1042
+    O00OOO0000OOOO000 .extend (OO0OO0OO0OO000O0O )#line:1043
+    OOO000000OO00OOO0 =Remover (O00O0000OOOOO0O0O ,OOO000000OO00OOO0 )#line:1044
+    OOO000000OO00OOO0 =Remover (OOOOO0OOOO00O0OOO ,OOO000000OO00OOO0 )#line:1046
+    OOO000000OO00OOO0 =Remover (O000O0OOOO0OO0OOO ,OOO000000OO00OOO0 )#line:1047
+    OOO000000OO00OOO0 =Remover (O0000O000OO0OO00O ,OOO000000OO00OOO0 )#line:1048
+    OO00OO0000000O0O0 =re .findall (OO0O0O000OO0OOO00 ,OOO000000OO00OOO0 )#line:1050
+    O00OOO0000OOOO000 .extend (OO00OO0000000O0O0 )#line:1051
+    OOO000000OO00OOO0 =Remover (OO0O0O000OO0OOO00 ,OOO000000OO00OOO0 )#line:1052
+    return OOO000000OO00OOO0 ,O00OOO0000OOOO000 #line:1054
+def Manager_name (O0O0OOOO0O00OO0O0 ):#line:1058
+    OO0O0OO00OO0OOOOO =[]#line:1059
+    O000000OOO0O00OO0 =" ?[담당] ?[담당] ?자? ?수? ?의? ?사? ?:? ?([가-힣]{0,4})"#line:1061
+    O0OO00OO000O0O0OO =re .findall (O000000OOO0O00OO0 ,O0O0OOOO0O00OO0O0 )#line:1063
+    OO0O0OO00OO0OOOOO .extend (O0OO00OO000O0O0OO )#line:1064
+    O0O0OOOO0O00OO0O0 =Remover (O000000OOO0O00OO0 ,O0O0OOOO0O00OO0O0 )#line:1065
+    return O0O0OOOO0O00OO0O0 ,OO0O0OO00OO0OOOOO #line:1067
+def receipt_filter (OO0000O000O00OO0O ):#line:1071
+    OO0OOO0OOOO00O0O0 =''#line:1072
+    O0O0O0OOOOO00O000 =''#line:1073
+    OO0O00O0O0OO0O00O ="기간 : (.+)"#line:1075
+    O0O0000O00O0O0000 ="고? ?객? ?이 ?름 ? ?:? ?[가-힣]{2,4} (.+)"#line:1076
+    OOOOOOOOOOOOOOOOO ="다 ?음 ?예 ?[정약] ?일? ?:?(.+)"#line:1077
+    OOO0O000O000O0OO0 ="(재? ?진 ?찰? ?료 ?비?.+)"#line:1078
+    if re .search (OO0O00O0O0OO0O00O ,OO0000O000O00OO0O )!=None :#line:1080
+        OO0OOO0OOOO00O0O0 =re .search (OO0O00O0O0OO0O00O ,OO0000O000O00OO0O ).group (1 )#line:1081
+        O0O0O0OOOOO00O000 =re .sub (OO0O00O0O0OO0O00O ,"",OO0000O000O00OO0O )#line:1082
+    elif re .search (O0O0000O00O0O0000 ,OO0000O000O00OO0O )!=None :#line:1084
+        OO0OOO0OOOO00O0O0 =re .search (O0O0000O00O0O0000 ,OO0000O000O00OO0O ).group (1 )#line:1085
+        O0O0O0OOOOO00O000 =re .sub (O0O0000O00O0O0000 ,"",OO0000O000O00OO0O )#line:1086
+    elif re .search (OOOOOOOOOOOOOOOOO ,OO0000O000O00OO0O )!=None :#line:1088
+        OO0OOO0OOOO00O0O0 =re .search (OOOOOOOOOOOOOOOOO ,OO0000O000O00OO0O ).group (1 )#line:1089
+        O0O0O0OOOOO00O000 =re .sub (OOOOOOOOOOOOOOOOO ,"",OO0000O000O00OO0O )#line:1090
+    elif re .search (OOO0O000O000O0OO0 ,OO0000O000O00OO0O )!=None :#line:1092
+        OO0OOO0OOOO00O0O0 =re .search (OOO0O000O000O0OO0 ,OO0000O000O00OO0O ).group (1 )#line:1093
+        O0O0O0OOOOO00O000 =re .sub (OOO0O000O000O0OO0 ,"",OO0000O000O00OO0O )#line:1094
+    else :#line:1096
+        OO0OOO0OOOO00O0O0 =OO0000O000O00OO0O #line:1097
+    return OO0OOO0OOOO00O0O0 ,O0O0O0OOOOO00O000 #line:1099
+def Text_Whitespace_Text_Editer (OOO0O0O000OOO0000 ):#line:1103
+    O0O0O00O0OO0OO000 ="([가-힣a-zA-Z-\.\,\(\)]) ([가-힣a-zA-Z-\.\,\(\)])"#line:1104
+    OOO000OOOOO0O00O0 ="(\d) ?([,\.]) ?(\d)"#line:1105
+    OOO0O0O000OOO0000 =re .sub (O0O0O00O0OO0OO000 ,r'\1\2',OOO0O0O000OOO0000 )#line:1106
+    OOO0O0O000OOO0000 =Remove_Multiple_Space (OOO0O0O000OOO0000 )#line:1107
+    OOO0O0O000OOO0000 =re .sub (O0O0O00O0OO0OO000 ,r'\1\2',OOO0O0O000OOO0000 )#line:1108
+    OOO0O0O000OOO0000 =Remove_Multiple_Space (OOO0O0O000OOO0000 )#line:1109
+    OOO0O0O000OOO0000 =re .sub (OOO000OOOOO0O00O0 ,r'\1\2\3',OOO0O0O000OOO0000 )#line:1110
+    OOO0O0O000OOO0000 =Remove_Multiple_Space (OOO0O0O000OOO0000 )#line:1111
+    return OOO0O0O000OOO0000 #line:1113
+def Too_Many_0_Remover (OOOOOOOO0O0O0OO0O ):#line:1117
+    O00O0O0O000OOOO0O ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1118
+    O0O00O0O00OOOOO00 ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1119
+    O00OO0O0OO000O00O ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1120
+    O00OOOOOOO0000O00 ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1121
+    O0OOO00O00O0OOO0O ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1122
+    O0OOOOOO0OOOOOO00 ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1123
+    O0O0O00O0O0O0O0OO ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1124
+    OO00OO0O0O000OO0O ="(\d) \d \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1125
+    O000O0OO0O0O0O000 ="(\d) \d \d \d \d \d \d \d \d \d \d \d (\d)"#line:1126
+    O0O0O0O000OO00O00 ="(\d) \d \d \d \d \d \d \d \d \d \d (\d)"#line:1127
+    O00O00OO000OOOOO0 ="(\d) \d \d \d \d \d \d \d \d \d (\d)"#line:1128
+    OO0OOO0OO0O00000O ="(\d) \d \d \d \d \d \d \d \d (\d)"#line:1129
+    O0OO00000O0000OO0 ="(\d) \d \d \d \d \d \d \d (\d)"#line:1130
+    O0O0OOO00000O00O0 ="(\d) \d \d \d \d \d \d (\d)"#line:1131
+    OO0OOOO0O0O0OOO0O ="(\d) \d \d \d \d \d (\d)"#line:1132
+    OOO0OO00O0OOO00O0 ="(\d) \d \d \d \d (\d)"#line:1133
+    OOO00OOOO00OOO0OO ="(\d) \d \d \d (\d)"#line:1134
+    O00OO00OOO00000OO ="(\d) \d \d (\d)"#line:1135
+    OOOOOOOO0O0O0OO0O =re .sub (O00O0O0O000OOOO0O ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1137
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1138
+    OOOOOOOO0O0O0OO0O =re .sub (O0O00O0O00OOOOO00 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1139
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1140
+    OOOOOOOO0O0O0OO0O =re .sub (O00OO0O0OO000O00O ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1141
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1142
+    OOOOOOOO0O0O0OO0O =re .sub (O00OOOOOOO0000O00 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1143
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1144
+    OOOOOOOO0O0O0OO0O =re .sub (O0OOO00O00O0OOO0O ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1145
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1146
+    OOOOOOOO0O0O0OO0O =re .sub (O0OOOOOO0OOOOOO00 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1147
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1148
+    OOOOOOOO0O0O0OO0O =re .sub (O0O0O00O0O0O0O0OO ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1149
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1150
+    OOOOOOOO0O0O0OO0O =re .sub (OO00OO0O0O000OO0O ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1151
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1152
+    OOOOOOOO0O0O0OO0O =re .sub (O000O0OO0O0O0O000 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1153
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1154
+    OOOOOOOO0O0O0OO0O =re .sub (O0O0O0O000OO00O00 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1155
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1156
+    OOOOOOOO0O0O0OO0O =re .sub (O00O00OO000OOOOO0 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1157
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1158
+    OOOOOOOO0O0O0OO0O =re .sub (OO0OOO0OO0O00000O ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1159
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1160
+    OOOOOOOO0O0O0OO0O =re .sub (O0OO00000O0000OO0 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1161
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1162
+    OOOOOOOO0O0O0OO0O =re .sub (O0O0OOO00000O00O0 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1163
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1164
+    OOOOOOOO0O0O0OO0O =re .sub (OO0OOOO0O0O0OOO0O ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1165
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1166
+    OOOOOOOO0O0O0OO0O =re .sub (OOO0OO00O0OOO00O0 ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1167
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1168
+    OOOOOOOO0O0O0OO0O =re .sub (OOO00OOOO00OOO0OO ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1169
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1170
+    OOOOOOOO0O0O0OO0O =re .sub (O00OO00OOO00000OO ,r'\1 0 \2',OOOOOOOO0O0O0OO0O )#line:1171
+    OOOOOOOO0O0O0OO0O =Remove_Multiple_Space (OOOOOOOO0O0O0OO0O )#line:1172
+    return OOOOOOOO0O0O0OO0O #line:1174
+def Error_0_Fixer (O0000OO0O0OOO0OOO ):#line:1179
+    O0000OO0O0OOO0OOO =re .sub ("NPH\(? ?1 ?0 ?0 ?I? ?U? ?1? ?0? ?\)?","NPH(1OOIU)",O0000OO0O0OOO0OOO )#line:1180
+    O0000OO0O0OOO0OOO =re .sub ("00 ?g","OOg",O0000OO0O0OOO0OOO )#line:1181
+    O0000OO0O0OOO0OOO =re .sub ("0 ?g","Og",O0000OO0O0OOO0OOO )#line:1182
+    O0000OO0O0OOO0OOO =re .sub ("00 ?매","OO매",O0000OO0O0OOO0OOO )#line:1183
+    O0000OO0O0OOO0OOO =re .sub ("0 ?매","O매",O0000OO0O0OOO0OOO )#line:1184
+    O0000OO0O0OOO0OOO =re .sub ("0 ?ea","Oea",O0000OO0O0OOO0OOO )#line:1185
+    O0000OO0O0OOO0OOO =re .sub ("0cm","Ocm",O0000OO0O0OOO0OOO )#line:1186
+    O0000OO0O0OOO0OOO =re .sub ("0층","O층",O0000OO0O0OOO0OOO )#line:1187
+    O0000OO0O0OOO0OOO =re .sub ("iSmart ?300","iSmart3OO",O0000OO0O0OOO0OOO )#line:1188
+    O0000OO0O0OOO0OOO =re .sub ("00ml","OOml",O0000OO0O0OOO0OOO )#line:1189
+    O0000OO0O0OOO0OOO =re .sub ("0ml","Oml",O0000OO0O0OOO0OOO )#line:1190
+    O0000OO0O0OOO0OOO =re .sub ("0개","O개",O0000OO0O0OOO0OOO )#line:1191
+    O0000OO0O0OOO0OOO =re .sub ("NX ?- ?\d00","NX-5OO",O0000OO0O0OOO0OOO )#line:1192
+    O0000OO0O0OOO0OOO =re .sub ("Physicalexam 1","Physicalexam1",O0000OO0O0OOO0OOO )#line:1193
+    O0000OO0O0OOO0OOO =re .sub ("혈 ?액 ?검 ?사 ?0","혈액검사",O0000OO0O0OOO0OOO )#line:1194
+    O0000OO0O0OOO0OOO =re .sub ("피 ?하 ?주 ?사 ?0","피하주사O",O0000OO0O0OOO0OOO )#line:1195
+    O0000OO0O0OOO0OOO =re .sub ("잘라탄0.00\d ?","잘라탄",O0000OO0O0OOO0OOO )#line:1196
+    O0000OO0O0OOO0OOO =re .sub (" ?마 ?취 ?전 ?1 ?0 ?종 ?","마취전1O종",O0000OO0O0OOO0OOO )#line:1197
+    O0000OO0O0OOO0OOO =re .sub ("PT10","PT1O",O0000OO0O0OOO0OOO )#line:1198
+    O0000OO0O0OOO0OOO =re .sub ("진 ?료 ?비?0+","진료 ",O0000OO0O0OOO0OOO )#line:1199
+    O0000OO0O0OOO0OOO =re .sub ("BS\-330","BS\-33O",O0000OO0O0OOO0OOO )#line:1200
+    return O0000OO0O0OOO0OOO #line:1202
+def Remove_Words_2 (OOO00O0O0O0OO0000 ):#line:1206
+    OOO00O0O0O0OO0000 =Remover (" 0%",OOO00O0O0O0OO0000 )#line:1207
+    OOO00O0O0O0OO0000 =Remover (" 0 ?원",OOO00O0O0O0OO0000 )#line:1208
+    OOO00O0O0O0OO0000 =Remover ("\(?\[? ?I? ?C? ?신 ?용 ?구? ?매? ?\]?승? ?인? ?\]?정? ?보? ?\(?고? ?객? ?용? ?\)? ?:? ?I? ?\)",OOO00O0O0O0OO0000 )#line:1209
+    OOO00O0O0O0OO0000 =Remover ("\d{2} ?: ?\d{2} ?: ?\d{2} ?",OOO00O0O0O0OO0000 )#line:1210
+    OOO00O0O0O0OO0000 =Remover ("\[ ?일 ?시 ?불 ?:? ?\]? ?",OOO00O0O0O0OO0000 )#line:1211
+    OOO00O0O0O0OO0000 =Remover ("\(? ?일 ?시 ?불 ?\)?",OOO00O0O0O0OO0000 )#line:1212
+    OOO00O0O0O0OO0000 =Remover ("\(? ?일 ?시 ?불 ?\)?",OOO00O0O0O0OO0000 )#line:1213
+    OOO00O0O0O0OO0000 =Remover ("계? ?좌? ? ?E? ?보? ?호? ? ?카? ?드? ?가? ?맹? ?점? ?/?일? ?련? ?사? ?업? ?자? ?등? ?록? ?가? ?맹? ?점? ?전? ?표? ?거? ?래? ? ?승? ?인? ?번 ?호 ?:? ?",OOO00O0O0O0OO0000 )#line:1214
+    OOO00O0O0O0OO0000 =Remover ("섹? ?션? ?자? ?금? ?가? ?맹? ?점? ?청? ?구? ?매? ?형? ?지? ?급? ?형? ?캐? ?시? ?백? ?카? ?드? ?결 ?제 ?\(?[예에]? ?정? ?\)? ?일? ?:? ?요? ?청? ?:? ?0? ?\?? ?:? ?없? ?음? ?:? ?:? ?취? ?소? ?가? ?가? ?능? ?액? 현? ?금? ?드? ?:? ?현? ?:? ?\d{0,3}[,\.]{0,2}\d{0,3}[,\.]{0,2}\d{0,3} ? ?중?원?섹? ?션? ?",OOO00O0O0O0OO0000 )#line:1215
+    OOO00O0O0O0OO0000 =Remover (" ?거 ?래 ?내 ?용 ?",OOO00O0O0O0OO0000 )#line:1216
+    OOO00O0O0O0OO0000 =Remover (" ?신? ?한? ?K? ?B? ?최? ?종? ?롯? ?데? ?자? ?사? ?현? ?대? ?하? ?나? ?체? ?크? ?카? ?드? ?\/? ?삼? ?성? ?하? ?나? ?비? ?자? ?카? ?드? ?페? ?이? ?\/?I? ?C? ?신? ?용? ?승 ?인 ?상? ?태? ?",OOO00O0O0O0OO0000 )#line:1217
+    OOO00O0O0O0OO0000 =Remover (" ?원? ?봉? ?사? ?료? ?체? ?크? ?카? ?드? ?\)? ?정? ?상? ?매? ?입? ?가 ?맹 ?점 ?명? ?:? ?정? ?보? ?즉? ?시? ?결? ?제? ?\/? ?사? ?업? ?자? ?2?4?시?\d{0,11}",OOO00O0O0O0OO0000 )#line:1218
+    OOO00O0O0O0OO0000 =Remover (" ?\(?실? ?물? ? ?N? ?H? ?삼? ?성? ?국? ?민? ?[하히]? ?나? ?신? ?한? ?롯? ?데? ?V? ?I? ?S? ?A? ?우? ?리? ?비? ?씨? ?체? ?크? ?카 ?드 ?종? ? ?류? ?사?체? ?크? ?\)?명? ?",OOO00O0O0O0OO0000 )#line:1219
+    OOO00O0O0O0OO0000 =Remover (" ?5?0?[,\.]{0,1}0?0?0?원? ?이? ?하? ?는? ?무서명거래 ?알? ?림? ?자? ?동? ?이? ?[체제]? ?[Kk]? ?[Il]? ?S? ?로? ?제? ?출? ?E? ?D? ?C? ?매? ?출? ?전? ?표? ?알? ?림? ?",OOO00O0O0O0OO0000 )#line:1220
+    OOO00O0O0O0OO0000 =Remover (" ?\d\d\ ?/ ?\d\d ?/ ?\d\d ?원?\(? ?I? ?C? ?\)?",OOO00O0O0O0OO0000 )#line:1221
+    OOO00O0O0O0OO0000 =Remover (" ?새? ?마? ?을? ?차? ?이? ?B? ?C? ?국? ?민? ?우? ?리? ?삼? ?성? ?[Nn]? ?[Hh]? ?신? ?한? ?카? ?카? ?오? ?마? ?스? ?터? ?\d{4} ?- ?\d{4} ?- ?\d{4} ?-? ?\d?\d?\d?\d? ?-?\d?\d?\d?\d? ?원?계?",OOO00O0O0O0OO0000 )#line:1222
+    OOO00O0O0O0OO0000 =Remover (" ?K? ?B? ? ?가 ?맹 ?섬? ?점? ?N? ?o? ?:? ?이? ?용? ?내? ?역? ?",OOO00O0O0O0OO0000 )#line:1223
+    OOO00O0O0O0OO0000 =Remover (" ?\D+24 ?시 ?\D+[센터병원]{2} ?",OOO00O0O0O0OO0000 )#line:1224
+    OOO00O0O0O0OO0000 =Remover (" ?\[? ?IC ?신 ?용 ?한?구? ?매? ?\]?",OOO00O0O0O0OO0000 )#line:1225
+    OOO00O0O0O0OO0000 =Remover (" ?할? ?부? ?:? ?\d?\d?\d?\d?-?\d?\d?\*\*\/? ?-?\*?\*?-? ?\d?\d?\d?\d?-?\d?\d?\d?\d?",OOO00O0O0O0OO0000 )#line:1226
+    OOO00O0O0O0OO0000 =Remover (" ?\/ ?[Tt] ?[Ee] ?[Ll] .+\/",OOO00O0O0O0OO0000 )#line:1227
+    OOO00O0O0O0OO0000 =Remover ("\(?\[? ?회 ?원 ?용? ?\]?\)?주? ?소? ? ?:?가? ?입? ?후? ?",OOO00O0O0O0OO0000 )#line:1228
+    OOO00O0O0O0OO0000 =Remover (" ?했? ?영? ?수? ?바? ?랍? ?처? ?리? ?혜? ?택? ?을? ?환? ?불? ?됩? ?받? ?으? ?셨? ?연? ?중? ?3?6?5?일? ?조? ?제? ?하? ?였? ?청? ?구? ?있? ?양? ?해? ?부? ?탁? ?가? ?능? ?시? ?키? ?셔? ?야? ?드? ?립? ?필? ?요? ?하? ?겠? ?습? ?저? ?희? ?진? ?료? ?합? ?니 ?다 ?\.? ?",OOO00O0O0O0OO0000 )#line:1229
+    OOO00O0O0O0OO0000 =Remover (" ?\[ ?[sS] ?[hH] ?[Ii] ?[nN] ?[hH] ?[aA] ?[nN] ?[mM]? ?[aA]? ?[sS]? ?[tT]? ?[eE]? ?[rR]?[vV]? ?[iI]? ?[sS]? ?[aA]? ?\]?",OOO00O0O0O0OO0000 )#line:1230
+    OOO00O0O0O0OO0000 =Remover (" ?알? ?림? ?자? ?동? ?이? ?체? ?K ?I ?S ?로 ?제? ?[출줄]? ?알? ?림? ?자? ?동? ?이? ?체? ?",OOO00O0O0O0OO0000 )#line:1231
+    OOO00O0O0O0OO0000 =Remover (" ?\[? 이? ?계? ?산? ?서? ?는? ?물? ?품? ?반? ?품? ?시? ?본? ?Q? ?R? ?[현연]? ?금? ?영 ?수 ?증 ?을? ?필? ?히? ?지? ?참? ?하? ?여? ?주? ?시? ?기? ?신? ?청? ?완? ?료? ?발? ?급? ?설? ?정? ?으? ?로? ?사? ?용? ?할? ?수? ?있? ?으?며? ?,? ?재? ?발? ?행? ?하? ?지? ?않? ?교? ?환? ?및? ?없? ?으? ?면? ?\]?",OOO00O0O0O0OO0000 )#line:1232
+    OOO00O0O0O0OO0000 =Remover (" ?상 ?품 ?명 ?앞? ?에? ?\*? ?은? ?면? ?세? ?물? ?청? ?구? ?품? ?스? ?:? ?",OOO00O0O0O0OO0000 )#line:1233
+    OOO00O0O0O0OO0000 =Remover (" ?\( ?V ?A ?T ? ?포? ?함? ?\) ?원?",OOO00O0O0O0OO0000 )#line:1234
+    OOO00O0O0O0OO0000 =Remover (" ?\[? 단? ?위? ?당? ?1? ?회? ?청? ?구? ?오? ?늘? ?청 ?구 ? ?일? ?:? ?\d{0,3}[,\.]?\d{0,3}[,\.]?\d{0,3} ?대? ?상? ?자? ?항? ?목? ?완? ?료? ?시? ?각? ?-? ?\]?\)?",OOO00O0O0O0OO0000 )#line:1235
+    OOO00O0O0O0OO0000 =Remover (" ?거? ?[가-힣]{0,1} ?매? ?일 ?시 ?:? ?\/?할? ?부? ?비? ?고? ?",OOO00O0O0O0OO0000 )#line:1236
+    OOO00O0O0O0OO0000 =Remover (" ?:? ?발 ?:? ?행 ?:?일 ?:? ?",OOO00O0O0O0OO0000 )#line:1237
+    OOO00O0O0O0OO0000 =Remover (" ?1?\.? ?신용 ?매? ?출? ?전? ?표? ?등? ?급? ?:? ?",OOO00O0O0O0OO0000 )#line:1238
+    OOO00O0O0O0OO0000 =Remover (" ?일? ?자? ?환? ?자? ?이? ?름? ? ?세 ?부 ?내 ?역 ?수? ?량? ?물? ?품? ?",OOO00O0O0O0OO0000 )#line:1239
+    OOO00O0O0O0OO0000 =Remover (" ?지 ?침 ?사 ?항 ?:? ?오? ?[후전]{0,1}\d?시? ?오? ?[후전]{0,1} ?[0-2]?\d?시?",OOO00O0O0O0OO0000 )#line:1240
+    OOO00O0O0O0OO0000 =Remover (" ?유? ?효? ?기? ?간? ?\/? ?거? ?래? ?유? ?형? ?할 ?부 ?개? ?월? ?공? ?급? ?가? ?액? ?:? ?[1-9]?\d{0,2}[,\.]?\d?\d?\d?[,\.]?\d?\d?\d? ?원?개? ?월? ?",OOO00O0O0O0OO0000 )#line:1241
+    OOO00O0O0O0OO0000 =Remover (" ?결? ?제? ?방? ?법? ?단 ?말 ?기 ?I? ?D? ?:? ?\(? ?고? ?객? ?용? ?\)? ?N? ?O? ?",OOO00O0O0O0OO0000 )#line:1242
+    OOO00O0O0O0OO0000 =Remover (" ?알 ?림 ?메? ?세? ?지? ?전? ?자? ?서? ?명? ?전? ?표? ?임? ?:? ?전? ?자? ?서? ?명? ?전? ?표? ?문? ?의? ?:? ?E? ?D? ?C? ?매? ?출? ?표? ?톡? ?도? ?착? ?",OOO00O0O0O0OO0000 )#line:1243
+    OOO00O0O0O0OO0000 =Remover (" ?V ?A ?N ?K ?E ?Y ?:? ?\d{0,16} ?",OOO00O0O0O0OO0000 )#line:1244
+    OOO00O0O0O0OO0000 =Remover (" ?창? ?구? ?전? ?자? ?매 ?입 ? ?사? ?일? ?명? ?시? ?또? ?는? ?고?불? ?가? ? ?:? ?원? ?",OOO00O0O0O0OO0000 )#line:1245
+    OOO00O0O0O0OO0000 =Remover (" ?전 ?자 ?전 ?표 ?",OOO00O0O0O0OO0000 )#line:1246
+    OOO00O0O0O0OO0000 =Remover (" ?전 ?자 ?서 ?명 ?전 ?표 ?임? ?",OOO00O0O0O0OO0000 )#line:1247
+    OOO00O0O0O0OO0000 =Remover (" ?전 ?자 ?차 ?트 ?",OOO00O0O0O0OO0000 )#line:1248
+    OOO00O0O0O0OO0000 =Remover (" ?전 ?자 ?서 ?명 ?",OOO00O0O0O0OO0000 )#line:1249
+    OOO00O0O0O0OO0000 =Remover (" ?항? ?목? ?상? ?품? ?총? ?진? ?료? ?구? ?분? ?진? ?찰? ?비? ?료? ?내? ?용? ?단? ?가? ?항? ?목? ?명? ?수 ?량 ?단? ?위? ?가? ?적? ?립? ?용? ?항? ?목? ?:? ?",OOO00O0O0O0OO0000 )#line:1250
+    OOO00O0O0O0OO0000 =Remover (" ?일 ?반 ?진 ?료 ?시 ?간 ?:? ?야? ?간? ?응? ?급? ?진? ?료? ?: ?오? ?[후전]{0,1} ?[0-2]{0,1}\d?시? ?-? ?야? ?간? ?응? ?급? ?진? ?료? ?:? ?오? ?[후전]{0,1} ?-? ?",OOO00O0O0O0OO0000 )#line:1251
+    OOO00O0O0O0OO0000 =Remover (" ?고 ?객 ?성? ?명 ?:? ?[가-힣]{2,4} ?",OOO00O0O0O0OO0000 )#line:1252
+    OOO00O0O0O0OO0000 =Remover (" ?고 ?객 ?이 ?름 ?:? ?[가-힣]{2,4} ?",OOO00O0O0O0OO0000 )#line:1253
+    OOO00O0O0O0OO0000 =Remover (" ?실? ?제? ?와? ?다? ?른? ?신? ?표? ?\(?\[? ?고 ?객 ?용? ?센? ?터? ?보? ?관? ?용? ?-?\]?\)?상? ?호? ?:? ?",OOO00O0O0O0OO0000 )#line:1254
+    OOO00O0O0O0OO0000 =Remover (" ?물 ?품 ?가 ?액 ?:? ?[1-9]{0,1}\d{0,2}[,\.]{0,1}\d{0,3}[,\.]{0,1}\d{0,3} ?원? ?원? ?[1-9]{0,1}\d{0,2}[,\.]{0,1}\d{0,3}[,\.]{0,1}\d{0,3} ?원?행? ?일? ?받? ?을? ?받? ?은? ?결? ?제? ?수? ?단? ?별? ?결? ?제? ?내? ?역? ?액? ?:? ?가? ?액? ?:? ?=? ?",OOO00O0O0O0OO0000 )#line:1255
+    OOO00O0O0O0OO0000 =Remover (" ?남? ?은? ?현? ?재? ?[12]? ?\.? ?이? ?전? ?미 ?수 ?금? ?변? ?제? ?발? ?생? ?원? ?:? ?0? ?총? ?액? ?:? ?월? ?",OOO00O0O0O0OO0000 )#line:1256
+    OOO00O0O0O0OO0000 =Remover (" ?총? ?당? ?일? ?전? ?캐? ?시? ?백? ?적 ?립 ?금? ?사? ?용? ?:? ?",OOO00O0O0O0OO0000 )#line:1257
+    OOO00O0O0O0OO0000 =Remover (" ?종? ?이? ?영? ?수? ?증? ?과? ?동? ?일? ?한? ?내 ?용 ?",OOO00O0O0O0OO0000 )#line:1258
+    OOO00O0O0O0OO0000 =Remover (" ?실? ?제? ?세? ?가? ?격? ?상? ?세? ?기? ?타? ?거? ?래? ?방? ?문? ?및? ?미? ?내? ?원? ?예? ?방? ?접? ?종? ?물? ?진? ?료? ?비? ?결? ?제? ?용? ?품? ?내 ?역 ?품? ?목? ?단? ?기? ?서? ?을? ?물? ?명? ?:? ?으? ?로? ?확? ?인? ?증? ?시?",OOO00O0O0O0OO0000 )#line:1259
+    OOO00O0O0O0OO0000 =Remover (" ?\[ ?[Hh]? ?[Yy]? ?[Uu]? ?[Nn]? ?[Dd]? ?[Aa]? ?[Ii]? ?[Kk]? ?[Oo]? ?[Nn]? ?[Aa]? ?[Ll]? ?[Oo]? ?[Tt]? ?[Tt]? ?[Ee]? ?[Mm]? ?[Aa]? ?[Ss]? ?[Tt]? ?[Ee]? ?[Rr]? ?[cC] ?[aA] ?[rR] ?[dD] ?\]",OOO00O0O0O0OO0000 )#line:1260
+    OOO00O0O0O0OO0000 =Remover (" ?문? ?결? ?국? ?제 ?예 ?정 ?일? ?자? ?:? ?[1-9]{0,1}\d{0,2}[,\.]{0,1}\d{0,3}[,\.]{0,1}\d{0,3} ?행? ?일? ?:? ?",OOO00O0O0O0OO0000 )#line:1261
+    OOO00O0O0O0OO0000 =Remover (" ?지? ?도? ?보? ?기? ?\·?\.? ?상 ?세 ?",OOO00O0O0O0OO0000 )#line:1262
+    OOO00O0O0O0OO0000 =Remover (" ?\[? ?\(?K? ?E? ?B? ?H? ?A? ?N? ?A? ?S? ?A? ?M? ?S? ?U? ?N? ?G? ?H? ?C? ? ?V ?[Iil] ?S ?A ?C?R?E?D?I?T? ?\)? ?T? ?V? ?R? ?\]? ?:? ?",OOO00O0O0O0OO0000 )#line:1263
+    OOO00O0O0O0OO0000 =Remover (" 1\+2 ",OOO00O0O0O0OO0000 )#line:1264
+    OOO00O0O0O0OO0000 =Remover (" ?\(? ?\[? ?법 ?인 ?\]? ?\)? ?",OOO00O0O0O0OO0000 )#line:1265
+    OOO00O0O0O0OO0000 =Remover (" ?-? ?1일 ?\d ?회 ?",OOO00O0O0O0OO0000 )#line:1266
+    OOO00O0O0O0OO0000 =Remover (" \*+ ",OOO00O0O0O0OO0000 )#line:1267
+    OOO00O0O0O0OO0000 =Remover ("진 ?료 ?합 ?니 ?다 ?",OOO00O0O0O0OO0000 )#line:1268
+    OOO00O0O0O0OO0000 =Remover ("★",OOO00O0O0O0OO0000 )#line:1269
+    OOO00O0O0O0OO0000 =Remover ("S ?e ?r ?i ?a ?l ?N? ?o? ?\.? ?:? ?",OOO00O0O0O0OO0000 )#line:1270
+    OOO00O0O0O0OO0000 =re .sub ("([가-힣]+초? ?재? ?진 ?료 ?비? ?)"," 진료 ",OOO00O0O0O0OO0000 )#line:1272
+    OOO00O0O0O0OO0000 =Remover ("[가-힣]+ ?소재지 ?:? ?[가-힣]+",OOO00O0O0O0OO0000 )#line:1274
+    OOO00O0O0O0OO0000 =Remover ("^-? ?1? ?\*? ?□? ?\/? ?\~? ?\[? ?\]? ?\*?\×? ?\.? ?",OOO00O0O0O0OO0000 )#line:1275
+    OOO00O0O0O0OO0000 =Remover ("원장님 \[? ?\]? ?~?\*? ?\[? ?\]?",OOO00O0O0O0OO0000 )#line:1276
+    OOO00O0O0O0OO0000 =Remover ("\[ \]",OOO00O0O0O0OO0000 )#line:1277
+    OOO00O0O0O0OO0000 =Remover (" % ",OOO00O0O0O0OO0000 )#line:1278
+    OOO00O0O0O0OO0000 =Remover (".+\[[Ww] ?e ?b ?발 ?신 ?\].+",OOO00O0O0O0OO0000 )#line:1279
+    OOO00O0O0O0OO0000 =Remove_Multiple_Space (OOO00O0O0O0OO0000 )#line:1282
+    OOO00O0O0O0OO0000 =re .sub ("^ ","",OOO00O0O0O0OO0000 )#line:1283
+    return OOO00O0O0O0OO0000 #line:1284
+def Cost (O0OOOOO00O0OO000O ):#line:1287
+    OO0OO00OOO00O0000 =[]#line:1288
+    OO0OOO00O0O0OOO0O =" ?([가-힣a-zA-Z\(]{2,}) ?\( ?([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?\) ?"#line:1291
+    O0OOOO0O00OOOOO00 =" ?([가-힣a-zA-Z\(]{2,}) ?\( ?([1-9]\d{0,2}[,\.]\d{3}) ?\) ?"#line:1292
+    OOO0OOOOOO0OOO000 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) ([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원? \d{1,2} [1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} ?원?"#line:1293
+    O0O0OOOO0O0OOO000 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) ([1-9]\d{0,2}[,\.]\d{3}) ?원? \d{1,2} [1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3} ?원?"#line:1294
+    OO0O00O000O0OOOO0 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) ([1-9]\d{0,2}[,\.]\d{3}) ?원? \d{1,2} [1-9]\d{0,2}[,\.]\d{3} ?원?"#line:1295
+    O0OO000O00O00OOOO ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) ([1-9]\d{0,2}) ?원? \d{1,2} [1-9]\d{0,2}[,\.]\d{3} ?원?"#line:1296
+    O000OO00O00000OO0 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) [1-9]\d{0,2} ?원? \d{1,2} ([1-9]\d{0,2}) ?원?"#line:1297
+    O0OO0O0O00O000000 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) \d{1,2} ([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) ?원?"#line:1298
+    O0O0OO0000O00000O ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) \d{1,2} ([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:1299
+    O0OO0O0O00OO0OOOO ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) \d{1,2} ([1-9]\d{0,2}) ?원?"#line:1300
+    O00000000OO0OOOOO ="(진 ?료 ?비?-?기?본?) ([1-9]\d{0,2}[,\.]\d{3}[,\.]?\d{0,3})"#line:1301
+    OOO0OO00OO0O00O00 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) ([1-9]\d{0,2}[,\.]\d{3}[,\.]\d{3}) \d{1,2} "#line:1302
+    OOOO0OO000O0O0OO0 ="([가-힣a-zA-Z\+1-9 \-\(\)\/\~\[\]\.\,\·\&\:\#\*]{2,}) ([1-9]\d{0,2}[,\.]\d{3}) \d{1,2} "#line:1303
+    OO0O00O00OO0O0O00 =re .findall (OO0OOO00O0O0OOO0O ,O0OOOOO00O0OO000O )#line:1309
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO0O00O00OO0O0O00 ))#line:1310
+    O0OOOOO00O0OO000O =Remover (OO0OOO00O0O0OOO0O ,O0OOOOO00O0OO000O )#line:1311
+    O00OO0O0OOO0O0OOO =re .findall (O0OOOO0O00OOOOO00 ,O0OOOOO00O0OO000O )#line:1313
+    OO0OO00OOO00O0000 .extend (Cost_Maker (O00OO0O0OOO0O0OOO ))#line:1314
+    O0OOOOO00O0OO000O =Remover (O0OOOO0O00OOOOO00 ,O0OOOOO00O0OO000O )#line:1315
+    OO00000O0OO00OOO0 =re .findall (OOO0OOOOOO0OOO000 ,O0OOOOO00O0OO000O )#line:1317
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO00000O0OO00OOO0 ))#line:1318
+    O0OOOOO00O0OO000O =Remover (OOO0OOOOOO0OOO000 ,O0OOOOO00O0OO000O )#line:1319
+    OO0OO0O00OO00OOOO =re .findall (O0O0OOOO0O0OOO000 ,O0OOOOO00O0OO000O )#line:1321
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO0OO0O00OO00OOOO ))#line:1322
+    O0OOOOO00O0OO000O =Remover (O0O0OOOO0O0OOO000 ,O0OOOOO00O0OO000O )#line:1323
+    OO00O00O00000000O =re .findall (OO0O00O000O0OOOO0 ,O0OOOOO00O0OO000O )#line:1325
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO00O00O00000000O ))#line:1326
+    O0OOOOO00O0OO000O =Remover (OO0O00O000O0OOOO0 ,O0OOOOO00O0OO000O )#line:1327
+    O0O00OO00O000O00O =re .findall (O0OO000O00O00OOOO ,O0OOOOO00O0OO000O )#line:1329
+    OO0OO00OOO00O0000 .extend (Cost_Maker (O0O00OO00O000O00O ))#line:1330
+    O0OOOOO00O0OO000O =Remover (O0OO000O00O00OOOO ,O0OOOOO00O0OO000O )#line:1331
+    O0O0OO0000OO00OO0 =re .findall (O000OO00O00000OO0 ,O0OOOOO00O0OO000O )#line:1333
+    OO0OO00OOO00O0000 .extend (Cost_Maker (O0O0OO0000OO00OO0 ))#line:1334
+    O0OOOOO00O0OO000O =Remover (O000OO00O00000OO0 ,O0OOOOO00O0OO000O )#line:1335
+    OO0O000O0OOOO0000 =re .findall (O0OO0O0O00O000000 ,O0OOOOO00O0OO000O )#line:1337
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO0O000O0OOOO0000 ))#line:1338
+    O0OOOOO00O0OO000O =Remover (O0OO0O0O00O000000 ,O0OOOOO00O0OO000O )#line:1339
+    O000OOO0O0000OO0O =re .findall (O0O0OO0000O00000O ,O0OOOOO00O0OO000O )#line:1341
+    OO0OO00OOO00O0000 .extend (Cost_Maker (O000OOO0O0000OO0O ))#line:1342
+    O0OOOOO00O0OO000O =Remover (O0O0OO0000O00000O ,O0OOOOO00O0OO000O )#line:1343
+    OO0OO00O0OO000000 =re .findall (O0OO0O0O00OO0OOOO ,O0OOOOO00O0OO000O )#line:1345
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO0OO00O0OO000000 ))#line:1346
+    O0OOOOO00O0OO000O =Remover (O0OO0O0O00OO0OOOO ,O0OOOOO00O0OO000O )#line:1347
+    OO00OOOOO0O0OOO00 =re .findall (O00000000OO0OOOOO ,O0OOOOO00O0OO000O )#line:1349
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO00OOOOO0O0OOO00 ))#line:1350
+    O0OOOOO00O0OO000O =Remover (O00000000OO0OOOOO ,O0OOOOO00O0OO000O )#line:1351
+    OO0OO0O0O0O00O0OO =re .findall (OOO0OO00OO0O00O00 ,O0OOOOO00O0OO000O )#line:1353
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OO0OO0O0O0O00O0OO ))#line:1354
+    O0OOOOO00O0OO000O =Remover (OOO0OO00OO0O00O00 ,O0OOOOO00O0OO000O )#line:1355
+    OOO0OOOO0O0000O00 =re .findall (OOOO0OO000O0O0OO0 ,O0OOOOO00O0OO000O )#line:1357
+    OO0OO00OOO00O0000 .extend (Cost_Maker (OOO0OOOO0O0000O00 ))#line:1358
+    O0OOOOO00O0OO000O =Remover (OOOO0OO000O0O0OO0 ,O0OOOOO00O0OO000O )#line:1359
+    O0OOOOO00O0OO000O =re .sub ("^ ","",O0OOOOO00O0OO000O )#line:1361
+    return O0OOOOO00O0OO000O ,OO0OO00OOO00O0000 #line:1362
+def check_hospital_info (OOOOO000O0OOOOOOO ):#line:1366
+    O0OOO00O0O0O0OO00 =csv_to_data ('./final_hosp_info.csv')#line:1367
+    OO0000O00O0O00O0O =OOOOO000O0OOOOOOO [0 ]#line:1368
+    O00O00O0O00O00OOO =re .sub ("^0","",str (OOOOO000O0OOOOOOO [1 ]))#line:1369
+    O0000OOO00O0OOO0O =OOOOO000O0OOOOOOO [2 ]#line:1370
+    O00OOOOO000O00000 =OOOOO000O0OOOOOOO [3 ]#line:1371
+    if OO0000O00O0O00O0O in O0OOO00O0O0O0OO00 and OO0000O00O0O00O0O !='':#line:1373
+        try :#line:1374
+            O0OO0OO00O0000OOO =np .where (OO0000O00O0O00O0O ==O0OOO00O0O0O0OO00 )#line:1375
+            O0000OOO00O0OOO0O =O0OOO00O0O0O0OO00 [int (O0OO0OO00O0000OOO [0 ])][2 ]#line:1376
+            O00OOOOO000O00000 =O0OOO00O0O0O0OO00 [int (O0OO0OO00O0000OOO [0 ])][0 ]#line:1377
+            if O00O00O0O00O00OOO !='':#line:1378
+                pass #line:1379
+            else :#line:1380
+                O00O00O0O00O00OOO =str (0 )+str (O0OOO00O0O0O0OO00 [int (O0OO0OO00O0000OOO [0 ])][1 ])#line:1381
+            return OO0000O00O0O00O0O ,O00O00O0O00O00OOO ,O0000OOO00O0OOO0O ,O00OOOOO000O00000 #line:1382
+        except :#line:1383
+            return OO0000O00O0O00O0O ,O00O00O0O00O00OOO ,O0000OOO00O0OOO0O ,O00OOOOO000O00000 #line:1384
+    elif O00O00O0O00O00OOO in O0OOO00O0O0O0OO00 and O00O00O0O00O00OOO !='':#line:1386
+        try :#line:1387
+            O0OO0OO00O0000OOO =np .where (O00O00O0O00O00OOO ==O0OOO00O0O0O0OO00 )#line:1388
+            O0000OOO00O0OOO0O =O0OOO00O0O0O0OO00 [int (O0OO0OO00O0000OOO [0 ])][2 ]#line:1389
+            O00OOOOO000O00000 =O0OOO00O0O0O0OO00 [int (O0OO0OO00O0000OOO [0 ])][0 ]#line:1390
+            if OO0000O00O0O00O0O !='':#line:1391
+                pass #line:1392
+            else :#line:1393
+                OO0000O00O0O00O0O =O0OOO00O0O0O0OO00 [int (O0OO0OO00O0000OOO [0 ])][3 ]#line:1394
+            return OO0000O00O0O00O0O ,str (OOOOO000O0OOOOOOO [1 ]),O0000OOO00O0OOO0O ,O00OOOOO000O00000 #line:1395
+        except :#line:1396
+            return OO0000O00O0O00O0O ,O00O00O0O00O00OOO ,O0000OOO00O0OOO0O ,O00OOOOO000O00000 #line:1397
+    else :#line:1399
+        return OO0000O00O0O00O0O ,O00O00O0O00O00OOO ,O0000OOO00O0OOO0O ,O00OOOOO000O00000 #line:1400
+def lower (O00OO0OOO00O0O0OO ):#line:1404
+    OOOOOO0O0000OOOO0 =[]#line:1405
+    for OO00O00OOO000O00O in O00OO0OOO00O0O0OO :#line:1406
+        try :#line:1407
+            OO00O00O0O00O000O =OO00O00OOO000O00O .lower ()#line:1408
+            OOOOOO0O0000OOOO0 .append (OO00O00O0O00O000O )#line:1409
+        except :#line:1410
+            OOOOOO0O0000OOOO0 .append (OO00O00OOO000O00O )#line:1411
+    return OOOOOO0O0000OOOO0 #line:1412
+def check_removed_data (OO00O0OO0O0O0OO00 ):#line:1416
+    with open ("Keyword Labeling.json","r",encoding ='UTF-8-sig')as OO0OOO0OO0OO0O0OO :#line:1417
+        O000O000O000OO000 =json .load (OO0OOO0OO0OO0O0OO )#line:1418
+    OOOOOO00O00OOO0O0 =O000O000O000OO000 ['진단명']#line:1419
+    for OOOOO0OO000O00O00 ,OOO0O0OOOO000OOO0 in OOOOOO00O00OOO0O0 .items ():#line:1420
+        OOOO000OO0O00OOOO =lower ([OO00O0OO0O0O0OO00 ])#line:1421
+        if any (OOO0000OO00O00O0O in str (OOOO000OO0O00OOOO )for OOO0000OO00O00O0O in lower (OOO0O0OOOO000OOO0 )):#line:1422
+            return False #line:1423
+        else :#line:1424
+            return True #line:1425
+def find_keyword (O00OOOO00O0O000OO ):#line:1428
+    with open ('./Keyword Labeling.json','r',encoding ='UTF-8-sig')as O0OO000O0OOO0OOO0 :#line:1429
+        OO0000O00OO0O000O =json .load (O0OO000O0OOO0OOO0 )#line:1430
+    O0O000O000O0OOOO0 =OO0000O00OO0O000O ['진단명']#line:1431
+    for O0OO0OO00OOO0O0OO ,O0O0O0O0O0OOOOOO0 in O0O000O000O0OOOO0 .items ():#line:1432
+        for OO0O0000O00OO00O0 in O0O0O0O0O0OOOOOO0 :#line:1433
+            if OO0O0000O00OO00O0 in O00OOOO00O0O000OO :#line:1434
+                return 1 #line:1435
+    return 0 #line:1436
+def ReFilterCost (OOO0OO0000O00OOO0 ):#line:1440
+    OOOO00O0O00O0000O =[]#line:1441
+    OO0OO0000O0000OO0 =OOO0OO0000O00OOO0 .split (" ")#line:1443
+    for OO0OOO000000OOOO0 ,O00000000OOO00O0O in enumerate (OO0OO0000O0000OO0 ):#line:1444
+        OO0000OOO0O0OO00O =[]#line:1445
+        O0OO00O00OO0000OO =[]#line:1446
+        O0OO0000000O00O0O =find_keyword (O00000000OOO00O0O )#line:1447
+        if O0OO0000000O00O0O ==1 :#line:1448
+            OOO000OOOOO0O0O0O =OO0OOO000000OOOO0 +1 #line:1449
+            OOO0O00OO0OO0OO0O =0 #line:1450
+            while OOO000OOOOO0O0O0O <len (OO0OO0000O0000OO0 ):#line:1451
+                if OOO0O00OO0OO0OO0O ==3 :#line:1452
+                    break #line:1453
+                OO0000OOO0O0OO00O .append (OO0OO0000O0000OO0 [OOO000OOOOO0O0O0O ])#line:1454
+                OOO000OOOOO0O0O0O =OOO000OOOOO0O0O0O +1 #line:1455
+                OOO0O00OO0OO0OO0O =OOO0O00OO0OO0OO0O +1 #line:1456
+            OO0000OOO0O0OO00O =' '.join (OO0000OOO0O0OO00O )#line:1457
+            O0OOOOOOOO0O0OOOO ="([1-9]\d{0,2}[,\.]\d{3}) ?원? (\d{1,2}[\.]\d{1,2}) ([1-9]\d{0,2}[,\.]\d{3})? ?원?"#line:1458
+            OOOOO00OO0OO000OO ="([1-9]\d{0,2}[,\.]\d{3}) ?원? \d{1,2} ([1-9]\d{0,2}[,\.]\d{3})? ?원?"#line:1459
+            OOOO0OO0OOO0O00O0 ="(\d{1,2}[\.]\d{1,2}) [1-9]\d{0,2}[,\.]\d{3} ?원?"#line:1460
+            O0OO00OO0O000000O ="\d{1,2} ([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:1461
+            O0O0OOO00OO000O00 ="([1-9]\d{0,2}[,\.]\d{3}) ?원?"#line:1462
+            O0000OOO0000OO00O =re .findall (O0OOOOOOOO0O0OOOO ,OO0000OOO0O0OO00O )#line:1463
+            O0OO00O00OO0000OO .extend (O0000OOO0000OO00O )#line:1464
+            OO0000OOO0O0OO00O =Remover (O0OOOOOOOO0O0OOOO ,OO0000OOO0O0OO00O )#line:1465
+            OOOOOO00O0O00OO0O =re .findall (OOOOO00OO0OO000OO ,OO0000OOO0O0OO00O )#line:1466
+            O0OO00O00OO0000OO .extend (OOOOOO00O0O00OO0O )#line:1467
+            OO0000OOO0O0OO00O =Remover (OOOOO00OO0OO000OO ,OO0000OOO0O0OO00O )#line:1468
+            O0O0000O0OO0OOOOO =re .findall (OOOO0OO0OOO0O00O0 ,OO0000OOO0O0OO00O )#line:1469
+            O0OO00O00OO0000OO .extend (O0O0000O0OO0OOOOO )#line:1470
+            OO0000OOO0O0OO00O =Remover (OOOO0OO0OOO0O00O0 ,OO0000OOO0O0OO00O )#line:1471
+            O00OO0O000000O00O =re .findall (O0OO00OO0O000000O ,OO0000OOO0O0OO00O )#line:1472
+            O0OO00O00OO0000OO .extend (O00OO0O000000O00O )#line:1473
+            OO0000OOO0O0OO00O =Remover (O0OO00OO0O000000O ,OO0000OOO0O0OO00O )#line:1474
+            O0OOOO000OO0O00O0 =re .findall (O0O0OOO00OO000O00 ,OO0000OOO0O0OO00O )#line:1475
+            O0OO00O00OO0000OO .extend (O0OOOO000OO0O00O0 )#line:1476
+            OO0000OOO0O0OO00O =Remover (O0O0OOO00OO000O00 ,OO0000OOO0O0OO00O )#line:1477
+            OOOO00O0O00O0000O .append (O00000000OOO00O0O )#line:1479
+            for OO0OO000OOO0O0O00 in O0OO00O00OO0000OO :#line:1480
+                if (isinstance (OO0OO000OOO0O0O00 ,tuple )):#line:1481
+                    OO0OO000OOO0O0O00 =list (OO0OO000OOO0O0O00 )#line:1482
+                    for O00000000OOO00O0O in OO0OO000OOO0O0O00 :#line:1483
+                        OOOO00O0O00O0000O .append (O00000000OOO00O0O )#line:1484
+                    continue #line:1485
+                OOOO00O0O00O0000O .append (OO0OO000OOO0O0O00 )#line:1486
+    for OO0OO000OOO0O0O00 in OOOO00O0O00O0000O :#line:1488
+        OOO0OO0000O00OOO0 =re .sub (re .escape (OO0OO000OOO0O0O00 ),"",OOO0OO0000O00OOO0 )#line:1489
+    return OOO0OO0000O00OOO0 ,OOOO00O0O00O0000O #line:1490
+def Cost_verification (O000O00O0OOOOO0O0 ):#line:1494
+    O00O0000OO0000O0O =reg .check_disease_single (O000O00O0OOOOO0O0 )#line:1495
+    return O00O0000OO0000O0O #line:1496
+def event_to_clova (O0OO0000OOOOOOO00 ):#line:1500
+    O000O0000O0O0OOOO =O0OO0000OOOOOOO00 ['body']#line:1501
+    O0OO0O0O0O0000OOO =base64 .b64decode (O000O0000O0O0OOOO ).decode ('utf-8')#line:1502
+    OOO0O00000OO0OO0O =eval (O0OO0O0O0O0000OOO )#line:1503
+    O0O0OO000O0O0OO0O =OOO0O00000OO0OO0O ['clova_api']#line:1505
+    O0O000OOO000OO00O =OOO0O00000OO0OO0O ['clova_key']#line:1506
+    OO0OOOO00OO0O0OOO =OOO0O00000OO0OO0O ['uuid']#line:1507
+    O00O0000000000OO0 =OOO0O00000OO0OO0O ['image']#line:1508
+    O0OO0O0OO000000O0 =naver_clova_reader (O0O0OO000O0O0OO0O ,O0O000OOO000OO00O ,OO0OOOO00OO0O0OOO ,O00O0000000000OO0 )#line:1510
+    return O0OO0O0OO000000O0 #line:1512
+def main_code (OOOO00OOOO0O00O0O ):#line:1515
+    O000O00O0O0OOOO00 =[]#line:1516
+    O0OO000OOOOO0O0OO =[]#line:1517
+    OO00O00000O000OOO =[]#line:1518
+    O00OO00O0OOO0000O =[]#line:1519
+    O00O00OO0OO0O0O0O ,O0000OOO0O0O0OOO0 =filtering (OOOO00OOOO0O00O0O )#line:1521
+    O00O00OO0OO0O0O0O =Remove_Words (O00O00OO0OO0O0O0O )#line:1522
+    O00O00OO0OO0O0O0O =OCR_Error_Correction (O00O00OO0OO0O0O0O )#line:1523
+    O00O00OO0OO0O0O0O ,OO00O0OOOO00OO0O0 =Registration_Number (O00O00OO0OO0O0O0O )#line:1524
+    try :#line:1525
+        O000O00O0O0OOOO00 .append (OO00O0OOOO00OO0O0 [0 ])#line:1526
+    except :#line:1527
+        O000O00O0O0OOOO00 .append ('')#line:1528
+    O00O00OO0OO0O0O0O ,OO0OOO0OOOO0OOO00 =Charge_Date (O00O00OO0OO0O0O0O )#line:1531
+    O00O00OO0OO0O0O0O ,O0OO00O0O00O0000O =Weight_Data (O00O00OO0OO0O0O0O )#line:1534
+    O00O00OO0OO0O0O0O ,O0OO0000OO0000O0O =Animal_Name (O00O00OO0OO0O0O0O )#line:1537
+    O00O00OO0OO0O0O0O ,O0OO000OOOO0O0OOO =Non_Texable_item (O00O00OO0OO0O0O0O )#line:1540
+    O00O00OO0OO0O0O0O ,OOO0000OO0000OOO0 =Texable_item (O00O00OO0OO0O0O0O )#line:1543
+    O00O00OO0OO0O0O0O ,O00OO00O00OO00O0O =Tex (O00O00OO0OO0O0O0O )#line:1546
+    O00O00OO0OO0O0O0O ,OOO0000OO00000O0O =Phone_Number (O00O00OO0OO0O0O0O )#line:1549
+    try :#line:1550
+        O000O00O0O0OOOO00 .append (OOO0000OO00000O0O [0 ])#line:1551
+    except :#line:1552
+        O000O00O0O0OOOO00 .append ('')#line:1553
+    O00O00OO0OO0O0O0O ,OOOO0O000O0O00O0O =Small_Sum (O00O00OO0OO0O0O0O )#line:1556
+    O00O00OO0OO0O0O0O ,OOO0OO0O0O0OOOO0O =Total_Sum (O00O00OO0OO0O0O0O )#line:1559
+    O00O00OO0OO0O0O0O ,OO0OOO0000OO000OO =Discount (O00O00OO0OO0O0O0O )#line:1562
+    O00O00OO0OO0O0O0O ,O0OO00OO0O0O0O000 =Address (O00O00OO0OO0O0O0O )#line:1565
+    try :#line:1566
+        O000O00O0O0OOOO00 .append (O0OO00OO0O0O0O000 [0 ])#line:1567
+    except :#line:1568
+        O000O00O0O0OOOO00 .append ('')#line:1569
+    O00O00OO0OO0O0O0O ,O0OOO0OOO0O0O0O0O =Ceo (O00O00OO0OO0O0O0O )#line:1572
+    O00O00OO0OO0O0O0O ,OO00OO000O000O000 =Hospital_name (O00O00OO0OO0O0O0O )#line:1575
+    try :#line:1576
+        O000O00O0O0OOOO00 .append (OO00OO000O000O000 [0 ])#line:1577
+    except :#line:1578
+        O000O00O0O0OOOO00 .append ('')#line:1579
+    O00O00OO0OO0O0O0O ,OOOO0OO00O0OO0OOO =Manager_name (O00O00OO0OO0O0O0O )#line:1582
+    OOOOO00O0O0OOOOO0 ,O0O0OOO00O0OO0OO0 ,OO00OO0O000OOOO00 ,OOO0O0OO00OO0O000 =check_hospital_info (O000O00O0O0OOOO00 )#line:1585
+    O00O00OO0OO0O0O0O ,O000OOO0OOO0O0O00 =receipt_filter (O00O00OO0OO0O0O0O )#line:1586
+    O00O00OO0OO0O0O0O =Text_Whitespace_Text_Editer (O00O00OO0OO0O0O0O )#line:1589
+    O00O00OO0OO0O0O0O =Too_Many_0_Remover (O00O00OO0OO0O0O0O )#line:1590
+    O00O00OO0OO0O0O0O =Remove_Words_2 (O00O00OO0OO0O0O0O )#line:1591
+    O00O00OO0OO0O0O0O =Error_0_Fixer (O00O00OO0OO0O0O0O )#line:1592
+    O00O00OO0OO0O0O0O ,O0O00O0000000OO0O =Cost (O00O00OO0OO0O0O0O )#line:1595
+    O00OOOOOOOOOOO0O0 =Cost_verification (O0O00O0000000OO0O )#line:1596
+    OOO00O00OOO00OOOO =check_removed_data (O00O00OO0OO0O0O0O )#line:1603
+    O0OOOO00O0O000OOO =""#line:1606
+    if len (OO0OOO0OOOO0OOO00 )>0 :#line:1607
+        O0OOOO00O0O000OOO =OO0OOO0OOOO0OOO00 [0 ]#line:1608
+    O00O00O000OO0OOOO ={"original":OOOO00OOOO0O00O0O ,"receipt_check":O0000OOO0O0O0OOO0 ,"result":{'date':O0OOOO00O0O000OOO ,'weight':list (set (O0OO00O0O00O0000O )),'animal_name':O0OO0000OO0000O0O ,'non_taxable_item':list (set (O0OO000OOOO0O0OOO )),'tax':list (set (O00OO00O00OO00O0O )),'small_sum':list (set (OOOO0O000O0O00O0O )),'total_sum':list (set (OOO0OO0O0O0OOOO0O )),'discount':OO0OOO0000OO000OO ,'ceo':O0OOO0OOO0O0O0O0O ,'registration_number':str (OOOOO00O0O0OOOOO0 ),'phone_number':str (O0O0OOO00O0OO0OO0 ),'address':str (OO00OO0O000OOOO00 ),'hospital_name':str (OOO0O0OO00OO0O000 ),'data_removed':O000OOO0OOO0O0O00 ,'cost':O0O00O0000000OO0O ,'check_result':OOO00O00OOO00OOOO },"standardization_result":{'date':list (set (OO0OOO0OOOO0OOO00 )),'weight':list (set (O0OO00O0O00O0000O )),'animal_name':O0OO0000OO0000O0O ,'non_taxable_item':list (set (O0OO000OOOO0O0OOO )),'tax':list (set (O00OO00O00OO00O0O )),'small_sum':list (set (OOOO0O000O0O00O0O )),'total_sum':list (set (OOO0OO0O0O0OOOO0O )),'discount':OO0OOO0000OO000OO ,'ceo':O0OOO0OOO0O0O0O0O ,'registration_number':str (OOOOO00O0O0OOOOO0 ),'phone_number':str (O0O0OOO00O0OO0OO0 ),'address':str (OO00OO0O000OOOO00 ),'hospital_name':str (OOO0O0OO00OO0O000 ),'data_removed':O000OOO0OOO0O0O00 ,'cost':O00OOOOOOOOOOO0O0 ,'check_result':OOO00O00OOO00OOOO }}#line:1646
+    return O00O00O000OO0OOOO #line:1648
